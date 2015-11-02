@@ -51,6 +51,10 @@ bool start = true;
 bool playerLeft = false;
 bool playerRight = false;
 
+GLMmodel model[8];
+
+string auxPath;
+
 //STRINGS
 string instruccionesTxt = "Instrucciones",
 jugarTxt = "Jugar",
@@ -61,18 +65,18 @@ volverTxt = "<-", beginTxt = "Presiona Enter";
 //Makes the image into a texture, and returns the id of the texture
 void loadTexture(Image* image,int k)
 {
-    
+
     glBindTexture(GL_TEXTURE_2D, txtName[k]); //Tell OpenGL which texture to edit
-    
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    
-    
+
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    
+
     //Map the image to the texture
     glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
                  0,                            //0 for now
@@ -83,18 +87,40 @@ void loadTexture(Image* image,int k)
                  GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
                  //as unsigned numbers
                  image->pixels);               //The actual pixel data
-    
+
+}
+
+void initModels(){
+
+    auxPath = fullPath + "modelos/bird.obj";
+    model[0] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[0]);
+    glmVertexNormals(&model[0], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/plasticbottle.obj";
+    model[1] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[1]);
+    glmVertexNormals(&model[4], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/plasticflaske.obj";
+    model[2] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[2]);
+    glmVertexNormals(&model[5], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/StackofPapers.obj";
+    model[3] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[3]);
+    glmVertexNormals(&model[6], 90.0, GL_TRUE);
 }
 
 void loadImage(string nombreImagen, int numImagen)
 {
     Image* image;
-    //string ruta = "C:\\" + nombreImagen;
     string ruta = fullPath + "./imagenes/" + nombreImagen;
     image = loadBMP(ruta.c_str());
     loadTexture(image,numImagen);
     delete image;
-    
+
 }
 
 
@@ -103,10 +129,10 @@ void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
     glPushMatrix();
     glTranslatef(x,y,0);
     glScalef(sizeX, sizeY, 1.0);
-    
+
     for (int k=0;k<texto.length(); k++)
         glutStrokeCharacter(GLUT_STROKE_ROMAN,texto[k]);
-    
+
     glPopMatrix();
 }
 
@@ -123,9 +149,6 @@ void reshape (int w, int h)
     gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
     glTranslatef(0.0f, 1.0f, -6.0f);
 }
-
-
-
 
 
 void myTimer(int i) {
@@ -157,15 +180,13 @@ void initRendering()
 {
     GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
-    
+
     glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE);
-    
+
     glGenTextures(2, txtName); //Make room for our texture
-    
+
     loadImage("willy.bmp",++texNumber);
-
-
 }
 
 void opcionVolver()
@@ -182,22 +203,22 @@ void opcionVolver()
 void mostrarInicio()
 {
     glPushMatrix();
-    
+
         glColor3ub(1, 0, 0);
         despliegaTexto(beginTxt,-2,0.4,0.0025,0.0025);
-    
+
     glPopMatrix();
 }
 void mostrarMenu()
 {
     glPushMatrix();
-    
+
     //Iniciar juego
     glColor3ub(0, 0, 0);
     if(menuInicial)
         despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
-    
-   
+
+
     //Instrucciones
     glColor3ub(0, 0, 0);
     if(menuInicial)
@@ -210,7 +231,7 @@ void mostrarMenu()
 //
 //    if(menuNivel)
 //        opcionVolver();
-    
+
     glPopMatrix();
 }
 
@@ -219,23 +240,23 @@ void mostrarMenu()
 void mostrarInstrucciones()
 {
     glPushMatrix();
-    
+
     opcionVolver();
-    
+
     glPopMatrix();
 }
 void display()
 {
     glClearColor(0.0, 0.75, 0.75,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     glPushMatrix();
-    
+
     glTranslatef (0, 0.0, -.5);
     //Game Stats
-    
-    
-    
+
+
+
 
     glBegin(GL_QUADS);
     //Derecha (verde)
@@ -244,67 +265,65 @@ void display()
     glVertex3f( -medida,  -medida, -60 );
     glVertex3f( medida,  -medida,  60 );
     glVertex3f( medida, medida,  60 );
-    
+
     //Izquierda (azul)
     glColor3f(0.1, 0.0, 1.0);
     glVertex3f( -medida, -medida, -60 );
     glVertex3f( medida, -medida,  60 );
     glVertex3f( -medida,  medida,  60 );
     glVertex3f( medida,  medida, -60 );
-    
+
     glEnd();
-    
+
     glPopMatrix();
-    
+
     glBindTexture(GL_TEXTURE_2D, txtName[0]);
     if(start)
     {
         mostrarInicio();
-        
+
     }else if(menuInicial || menuNivel) {
         mostrarMenu();
     }
     else if(instrucciones) {
         mostrarInstrucciones();
     } else{
-    
-        //Cuadrado que cae
-        glPushMatrix();
-        glClear(GL_COLOR_BUFFER_BIT);
-        glPointSize(50);
-        
-        //////////1///////////
-        glBegin(GL_POINTS);
-        
-        glColor3f(0,0,1);
-        glVertex2f(-0.5,-t-0.5);
-        
-        glEnd();
-        
-        //////////2///////////
-        glBegin(GL_POINTS);
-        
-        glColor3f(1,0,1);
-        glVertex2f(0,-t);
-        
-        glEnd();
-        
-        //////////3/////////
-        glBegin(GL_POINTS);
-        
-        glColor3f(1,1,1);
-        glVertex2f(0.5,-t-1);
-        
-        glEnd();
-        
 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        //Pajaro
+        glPushMatrix();
+            glScalef(.7,.7,.7);
+            glTranslatef (0, -t, 0);
+            glRotatef(0+t*100,-5,-30,0);
+            glmDraw(&model[0], GLM_COLOR);
         glPopMatrix();
-        
-        
-        
-    
+
+        //Plastic Bottle
+        glPushMatrix();
+            glScalef(1.5,1.5,1.5);
+            glTranslatef (0, -t, 0);
+            glRotatef(0+t*100,-5,-30,0);
+            glmDraw(&model[1], GLM_COLOR);
+        glPopMatrix();
+
+        //Plastic Flaske
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (-1, -t, 0);
+            glRotatef(0+t*100,-5,-30,0);
+            glmDraw(&model[2], GLM_COLOR);
+        glPopMatrix();
+
+        //Stack of papers
+        glPushMatrix();
+            glScalef(.3,.3,.3);
+            glTranslatef (1.5, -t, 0);
+            glRotatef(0+t*100,-5,-30,0);
+            glmDraw(&model[3], GLM_COLOR);
+        glPopMatrix();
     }
-    
+
     glutSwapBuffers();
 }
 
@@ -315,22 +334,22 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
         case 27:
             exit(0);
             break;
-            
+
         case 't':
             if (!moviendo && !menuInicial && !menuNivel && !instrucciones) {
                 glutTimerFunc(100, myTimer, 1);
             }
             break;
-            
+
         case 13:
             if(start){
                 start=false;
                 menuInicial=true;
                 display();
             }
-            
+
             break;
-            
+
         default:
             break;
     }
@@ -342,7 +361,7 @@ void myMouse(int button, int state, int x, int y)
     int xIzq_volver = windowWidth*39/800, xDer_volver = windowWidth*205/800;
     if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON)
     {
-       
+
         if(menuInicial || menuNivel) {
             xIzq = windowWidth*100/800; xDer = windowWidth*300/800;
             yUp_1 = windowHeight*90/800; yDown_1 = windowHeight*207/800;
@@ -355,8 +374,8 @@ void myMouse(int button, int state, int x, int y)
                         menuNivel = false;
                     }
                     else if(menuNivel) {
-                 
-                
+
+
                         menuNivel = false;
                     }
                 }
@@ -366,8 +385,8 @@ void myMouse(int button, int state, int x, int y)
                         instrucciones = true;
                     }
                     else if(menuNivel) {
-           
-                       
+
+
                         menuNivel = false;
                     }
                 }
@@ -376,8 +395,8 @@ void myMouse(int button, int state, int x, int y)
                         exit(0);
                     }
                     else if(menuNivel) {
-      
-                     
+
+
                         menuNivel = false;
                     }
                 }
@@ -402,37 +421,52 @@ void myMouse(int button, int state, int x, int y)
 void specialKeys (int key, int x, int y){
     if(!menuInicial && !menuNivel && !instrucciones) {
         switch (key) {
-                
+
             case 'a':
             case 'A':
                 playerLeft = false;
                 break;
-                
+
             case 'd':
             case 'D':
                 playerRight = false;
                 break;
-                
+
             case 's':
             case 'S':
                 t = 0.4;
                 break;
-                
-                
+
+
             default:
                 break;
         }
     }
 }
 
+void getParentPath(){
+
+    for (int i = fullPath.length()-1; i>=0; i--) {
+        if(fullPath[i] ==  '\\'){
+            fullPath[i]= '/';
+        }
+    }
+
+    for (int i = fullPath.length()-1; i>=0 && fullPath[i] != '/'; i--) {
+        fullPath.erase(i,1);
+    }
+}
+
 int main(int argc, char** argv)
 {
+    getParentPath();
     glutInit(&argc, argv);
     glutInitWindowSize (windowWidth,windowHeight);
     glutInitWindowPosition (0,0);
     glutInitDisplayMode (GLUT_DOUBLE| GLUT_RGB| GLUT_DEPTH);
     glutCreateWindow("Help Out Willy!");
     init();
+    initModels();
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutTimerFunc(500, myTimer, 1);

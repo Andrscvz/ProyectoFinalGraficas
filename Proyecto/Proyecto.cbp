@@ -42,7 +42,42 @@
 			<Add library="gdi32" />
 			<Add directory="C:/Program Files (x86)/CodeBlocks/GLUT/lib" />
 		</Linker>
+		<Unit filename="glm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glm.h" />
+		<Unit filename="glm_util.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_devil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_jpg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_png.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmimg_sim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glmint.h" />
+		<Unit filename="imageloader.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="modelos/StackofPapers.mtl" />
+		<Unit filename="modelos/StackofPapers.obj" />
+		<Unit filename="modelos/bird.mtl" />
+		<Unit filename="modelos/bird.obj" />
+		<Unit filename="modelos/plasticbottle.mtl" />
+		<Unit filename="modelos/plasticbottle.obj" />
+		<Unit filename="modelos/plasticflaske.mtl" />
+		<Unit filename="modelos/plasticflaske.obj" />
 		<Extensions>
 			<code_completion />
 			<envvars />

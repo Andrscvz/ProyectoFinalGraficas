@@ -31,7 +31,14 @@ string fullPath = __FILE__;
 static GLuint txtName[40];
 
 float t=-1.0;
-float delta=0.1;
+float delta=0.11;
+
+//Movimientos del pajaro
+float movePajaroX = -2;
+bool pajaroXtof = true;
+float movePajaroZ = 0;
+bool pajaroZtof = true;
+float rotatePajaro = 0;
 
 //INTEGERS
 int windowWidth = 800, windowHeight = 800;
@@ -63,8 +70,7 @@ volverTxt = "<-", beginTxt = "Presiona Enter";
 
 
 //Makes the image into a texture, and returns the id of the texture
-void loadTexture(Image* image,int k)
-{
+void loadTexture(Image* image,int k){
 
     glBindTexture(GL_TEXTURE_2D, txtName[k]); //Tell OpenGL which texture to edit
 
@@ -91,7 +97,6 @@ void loadTexture(Image* image,int k)
 }
 
 void initModels(){
-
     auxPath = fullPath + "modelos/bird.obj";
     model[0] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[0]);
@@ -100,29 +105,31 @@ void initModels(){
     auxPath = fullPath + "modelos/plasticbottle.obj";
     model[1] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[1]);
-    glmVertexNormals(&model[4], 90.0, GL_TRUE);
+    glmVertexNormals(&model[1], 90.0, GL_TRUE);
 
     auxPath = fullPath + "modelos/plasticflaske.obj";
     model[2] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[2]);
-    glmVertexNormals(&model[5], 90.0, GL_TRUE);
+    glmVertexNormals(&model[2], 90.0, GL_TRUE);
 
     auxPath = fullPath + "modelos/StackofPapers.obj";
     model[3] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[3]);
-    glmVertexNormals(&model[6], 90.0, GL_TRUE);
+    glmVertexNormals(&model[3], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trash.obj";
+    model[4] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[4]);
+    glmVertexNormals(&model[4], 90.0, GL_TRUE);
 }
 
-void loadImage(string nombreImagen, int numImagen)
-{
+void loadImage(string nombreImagen, int numImagen){
     Image* image;
     string ruta = fullPath + "./imagenes/" + nombreImagen;
     image = loadBMP(ruta.c_str());
     loadTexture(image,numImagen);
     delete image;
-
 }
-
 
 void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
     glMatrixMode(GL_MODELVIEW);
@@ -136,8 +143,7 @@ void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
     glPopMatrix();
 }
 
-void reshape (int w, int h)
-{
+void reshape (int w, int h){
     windowWidth = w;
     windowHeight = h;
     glViewport(0, 0, w, h);
@@ -152,32 +158,50 @@ void reshape (int w, int h)
 
 
 void myTimer(int i) {
-    if (i ==1)
-    {   delta = 0.1;
+    if (i ==1){
+        if(t > 3){
+            t = -1;
+        }
         t += delta;
-        if ( t >= 3) {
-            glutPostRedisplay();
-            glutTimerFunc(330,myTimer,2);
+
+        rotatePajaro += 0.11;
+
+        //Pajaro moviendose en x
+        if(movePajaroX < -2)
+            pajaroXtof = true;
+
+        if(movePajaroX < 2 && pajaroXtof){
+            movePajaroX += 0.11;
+        }else{
+            pajaroXtof = false;
+            movePajaroX -= 0.11;
         }
-        else
-        {
-            glutPostRedisplay();
-            glutTimerFunc(330,myTimer,1);
+
+
+        //Pajaro moviendose en y
+        if(movePajaroZ < -2)
+            pajaroZtof = true;
+
+        if(movePajaroZ < 2 && pajaroZtof){
+            movePajaroZ += 0.11;
+        }else{
+            pajaroZtof = false;
+            movePajaroZ -= 0.11;
         }
+
+        glutPostRedisplay();
+        glutTimerFunc(100,myTimer,1);
     }
 }
 
 
-void init(void)
-{
+void init(void){
     glClearColor(1.0, 1.0, 1.0, 0.0);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
-    glutTimerFunc(1000, myTimer, 2);
-
 }
-void initRendering()
-{
+
+void initRendering(){
     GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
 
@@ -189,8 +213,7 @@ void initRendering()
     loadImage("willy.bmp",++texNumber);
 }
 
-void opcionVolver()
-{
+void opcionVolver(){
     //Boton Back
     glColor3ub(1, 0, 0);
     glPushMatrix();
@@ -200,93 +223,95 @@ void opcionVolver()
     glColor3ub(0, 0, 0);
     despliegaTexto(volverTxt,-2.15,0.95,0.0025,0.0025);
 }
-void mostrarInicio()
-{
-    glPushMatrix();
 
+void mostrarInicio(){
+    glPushMatrix();
         glColor3ub(1, 0, 0);
         despliegaTexto(beginTxt,-2,0.4,0.0025,0.0025);
-
     glPopMatrix();
 }
-void mostrarMenu()
-{
+
+void mostrarMenu(){
     glPushMatrix();
 
-    //Iniciar juego
-    glColor3ub(0, 0, 0);
-    if(menuInicial)
-        despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
+        //Iniciar juego
+        glColor3ub(0, 0, 0);
+        if(menuInicial)
+            despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
 
 
-    //Instrucciones
-    glColor3ub(0, 0, 0);
-    if(menuInicial)
-        despliegaTexto(instruccionesTxt,-2,-1.05,0.0025,0.0025);
+        //Instrucciones
+        glColor3ub(0, 0, 0);
+        if(menuInicial)
+            despliegaTexto(instruccionesTxt,-2,-1.05,0.0025,0.0025);
 
-    //Salir
-    glColor3ub(0, 0, 0);
-    if(menuInicial)
-        despliegaTexto(salirTxt,-2,-2.7,0.005,0.005);
-//
-//    if(menuNivel)
-//        opcionVolver();
+        //Salir
+        glColor3ub(0, 0, 0);
+        if(menuInicial)
+            despliegaTexto(salirTxt,-2,-2.7,0.005,0.005);
+
+    //if(menuNivel)
+    //  opcionVolver();
 
     glPopMatrix();
 }
 
 
 
-void mostrarInstrucciones()
-{
+void mostrarInstrucciones(){
     glPushMatrix();
-
-    opcionVolver();
-
+        opcionVolver();
     glPopMatrix();
 }
-void display()
-{
+
+void display(){
+
     glClearColor(0.0, 0.75, 0.75,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
 
-    glTranslatef (0, 0.0, -.5);
-    //Game Stats
+        glTranslatef (0, 0.0, -.5);
+        //Game Stats
 
+        glBegin(GL_QUADS);
+        //Derecha (verde)
+        glColor3f(0.0, 1.0, 0.1);
+        glVertex3f( medida, medida, -60 );
+        glVertex3f( -medida,  -medida, -60 );
+        glVertex3f( medida,  -medida,  60 );
+        glVertex3f( medida, medida,  60 );
 
+        //Izquierda (azul)
+        glColor3f(0.1, 0.0, 1.0);
+        glVertex3f( -medida, -medida, -60 );
+        glVertex3f( medida, -medida,  60 );
+        glVertex3f( -medida,  medida,  60 );
+        glVertex3f( medida,  medida, -60 );
 
-
-    glBegin(GL_QUADS);
-    //Derecha (verde)
-    glColor3f(0.0, 1.0, 0.1);
-    glVertex3f( medida, medida, -60 );
-    glVertex3f( -medida,  -medida, -60 );
-    glVertex3f( medida,  -medida,  60 );
-    glVertex3f( medida, medida,  60 );
-
-    //Izquierda (azul)
-    glColor3f(0.1, 0.0, 1.0);
-    glVertex3f( -medida, -medida, -60 );
-    glVertex3f( medida, -medida,  60 );
-    glVertex3f( -medida,  medida,  60 );
-    glVertex3f( medida,  medida, -60 );
-
-    glEnd();
+        glEnd();
 
     glPopMatrix();
 
     glBindTexture(GL_TEXTURE_2D, txtName[0]);
-    if(start)
-    {
+
+    start = false;
+    menuInicial = false;
+    menuNivel = false;
+    instrucciones = false;
+
+    if(start){
+
         mostrarInicio();
 
     }else if(menuInicial || menuNivel) {
+
         mostrarMenu();
-    }
-    else if(instrucciones) {
+
+    }else if(instrucciones) {
+
         mostrarInstrucciones();
+
     } else{
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -294,33 +319,68 @@ void display()
         //Pajaro
         glPushMatrix();
             glScalef(.7,.7,.7);
-            glTranslatef (0, -t, 0);
-            glRotatef(0+t*100,-5,-30,0);
+            glTranslatef (-movePajaroX, 1, movePajaroZ);
+            glRotatef(0+rotatePajaro*40,0,1,0);
             glmDraw(&model[0], GLM_COLOR);
         glPopMatrix();
 
         //Plastic Bottle
         glPushMatrix();
             glScalef(1.5,1.5,1.5);
-            glTranslatef (0, -t, 0);
-            glRotatef(0+t*100,-5,-30,0);
+            glTranslatef (1, -t/1.5, 0);
+            glRotatef(0+t*100,1,1,0);
             glmDraw(&model[1], GLM_COLOR);
         glPopMatrix();
 
         //Plastic Flaske
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-1, -t, 0);
-            glRotatef(0+t*100,-5,-30,0);
+            glTranslatef (-1, -t/.2, 0);
+            glRotatef(0+t*100,1,1,0);
             glmDraw(&model[2], GLM_COLOR);
         glPopMatrix();
 
         //Stack of papers
         glPushMatrix();
             glScalef(.3,.3,.3);
-            glTranslatef (1.5, -t, 0);
-            glRotatef(0+t*100,-5,-30,0);
+            glTranslatef (1.5, -t/.3, 0);
+            glRotatef(0+t*100,1,1,0);
             glmDraw(&model[3], GLM_COLOR);
+        glPopMatrix();
+
+        //Trash can1
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (-4, -16, 0);
+            glmDraw(&model[4], GLM_COLOR);
+        glPopMatrix();
+
+        //Trash can2
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (-2, -16, 0);
+            glmDraw(&model[4], GLM_COLOR);
+        glPopMatrix();
+
+        //Trash can3
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (0, -16, 0);
+            glmDraw(&model[4], GLM_COLOR);
+        glPopMatrix();
+
+        //Trash can4
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (2, -16, 0);
+            glmDraw(&model[4], GLM_COLOR);
+        glPopMatrix();
+
+        //Trash can5
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (4, -16, 0);
+            glmDraw(&model[4], GLM_COLOR);
         glPopMatrix();
     }
 
@@ -337,7 +397,7 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
 
         case 't':
             if (!moviendo && !menuInicial && !menuNivel && !instrucciones) {
-                glutTimerFunc(100, myTimer, 1);
+                glutTimerFunc(50, myTimer, 1);
             }
             break;
 
@@ -370,6 +430,7 @@ void myMouse(int button, int state, int x, int y)
             if(x >= xIzq && x <= xDer) {
                 if(y >= yUp_1 && y <= yDown_1) { // JUGAR
                     if(menuInicial) { //
+                        //glutTimerFunc(50, myTimer, 1);
                         menuInicial = false;
                         menuNivel = false;
                     }
@@ -469,7 +530,7 @@ int main(int argc, char** argv)
     initModels();
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
-    glutTimerFunc(500, myTimer, 1);
+    glutTimerFunc(50, myTimer, 1);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeys);
     glutMouseFunc(myMouse);

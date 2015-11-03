@@ -340,7 +340,7 @@ void display(){
             glmDraw(&model[2], GLM_COLOR);
         glPopMatrix();
 
-        //Stack of papers
+        //Stack of paper
         glPushMatrix();
             glScalef(.3,.3,.3);
             glTranslatef (1.5, -t/.3, 0);

@@ -24,6 +24,7 @@
 
 #include "glm.h"
 #include "imageloader.h"
+#include "Objeto.h"
 using namespace std;
 
 std::ostringstream strStream;
@@ -39,6 +40,13 @@ bool pajaroXtof = true;
 float movePajaroZ = 0;
 bool pajaroZtof = true;
 float rotatePajaro = 0;
+
+//Objetos que van a caer
+vector<Objeto *> objetosPlastico;
+vector<Objeto *> objetosPapel;
+vector<Objeto *> objetosAluminio;
+vector<Objeto *> objetosOrganico;
+
 
 //INTEGERS
 int windowWidth = 800, windowHeight = 800;
@@ -112,24 +120,40 @@ void initModels(){
     model[1] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[1]);
     glmVertexNormals(&model[1], 90.0, GL_TRUE);
+    Objeto * plastico = new Objeto(.2,1,-1);
+    objetosPlastico.push_back(plastico);
+    plastico = new Objeto(.2,1,0);
+    objetosPlastico.push_back(plastico);
 
     /********************Papel****************************/
     auxPath = fullPath + "modelos/StackofPapers.obj";
     model[2] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[2]);
     glmVertexNormals(&model[2], 90.0, GL_TRUE);
+    Objeto * papel = new Objeto(.2,2,-1);
+    objetosPapel.push_back(papel);
+    papel = new Objeto(.2,2,0);
+    objetosPapel.push_back(papel);
 
     /********************Aluminio****************************/
     auxPath = fullPath + "modelos/lata.obj";
     model[3] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[3]);
     glmVertexNormals(&model[3], 90.0, GL_TRUE);
+    Objeto * aluminio = new Objeto(.15,3,-1);
+    objetosAluminio.push_back(aluminio);
+    aluminio = new Objeto(.15,3,0);
+    objetosAluminio.push_back(aluminio);
 
     /***********************Organico*************************/
     auxPath = fullPath + "modelos/manzana.obj";
     model[4] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[4]);
     glmVertexNormals(&model[4], 90.0, GL_TRUE);
+    Objeto * organico = new Objeto(.15,4,-1);
+    objetosOrganico.push_back(organico);
+    organico = new Objeto(.15,4,0);
+    objetosOrganico.push_back(organico);
 
     /***********************Botes de basura*************************/
     auxPath = fullPath + "modelos/trashPlastico.obj";
@@ -163,7 +187,6 @@ void initModels(){
     model[10] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[10]);
     glmVertexNormals(&model[9], 90.0, GL_TRUE);
-
 
 }
 
@@ -203,13 +226,41 @@ void reshape (int w, int h){
 
 void myTimer(int i) {
     if (i ==1){
-
+        //Rotacion del mundo
         x=x+1;
 
-        if(t > 3){
-            t = -1;
+        /*********************Objetos que caen****************************/
+        //Para que cada objeto se mueva Plastico
+        for(int i = 0; i < objetosPlastico.size(); i++){
+            if(objetosPlastico[i]->getTranslate() > 3){
+                objetosPlastico[i]->setTranslate(-1);
+            }
+            objetosPlastico[i]->setTranslate(objetosPlastico[i]->getTranslate() + delta);
         }
-        t += delta;
+
+        //Para que cada objeto se mueva Papel
+        for(int i = 0; i < objetosPapel.size(); i++){
+            if(objetosPapel[i]->getTranslate() > 3){
+                objetosPapel[i]->setTranslate(-1);
+            }
+            objetosPapel[i]->setTranslate(objetosPapel[i]->getTranslate() + delta);
+        }
+
+        //Para que cada objeto se mueva Aluminio
+        for(int i = 0; i < objetosAluminio.size(); i++){
+            if(objetosAluminio[i]->getTranslate() > 3){
+                objetosAluminio[i]->setTranslate(-1);
+            }
+            objetosAluminio[i]->setTranslate(objetosAluminio[i]->getTranslate() + delta);
+        }
+
+        //Para que cada objeto se mueva Organico
+        for(int i = 0; i < objetosOrganico.size(); i++){
+            if(objetosOrganico[i]->getTranslate() > 3){
+                objetosOrganico[i]->setTranslate(-1);
+            }
+            objetosOrganico[i]->setTranslate(objetosOrganico[i]->getTranslate() + delta);
+        }
 
         rotatePajaro += 0.11;
 
@@ -394,40 +445,54 @@ void display(){
         glPopMatrix();
         /********************************/
 
+        double scale;
+
         /***********Plastico***************/
-        glPushMatrix();
-            glScalef(.2,.2,.2);
-            glTranslatef (-3, -t/.2, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[1], GLM_COLOR);
-        glPopMatrix();
+        for(int i = 0; i < objetosPlastico.size(); i++){
+            scale = objetosPlastico[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (-3, -objetosPlastico[i]->getTranslate()/scale, 0);
+                glRotatef(0+objetosPlastico[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosPlastico[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
         /********************************/
 
         /***********Papel***************/
-        glPushMatrix();
-            glScalef(.2,.2,.2);
-            glTranslatef (-1, -t/.2, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[2], GLM_COLOR);
-        glPopMatrix();
+        for(int i = 0; i < objetosPapel.size(); i++){
+            scale = objetosPapel[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (-1, -objetosPapel[i]->getTranslate()/scale, 0);
+                glRotatef(0+objetosPapel[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosPapel[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
         /********************************/
 
         /***********Aluminio***************/
-        glPushMatrix();
-            glScalef(.15,.15,.15);
-            glTranslatef (1.5, -t/.15, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[3], GLM_COLOR);
-        glPopMatrix();
+        for(int i = 0; i < objetosAluminio.size(); i++){
+            scale = objetosAluminio[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (1.5, -objetosAluminio[i]->getTranslate()/scale, 0);
+                glRotatef(0+objetosAluminio[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosAluminio[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
         /********************************/
 
         /***********Organico***************/
-        glPushMatrix();
-            glScalef(.15,.15,.15);
-            glTranslatef (4, -t/.15, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[4], GLM_COLOR);
-        glPopMatrix();
+        for(int i = 0; i < objetosOrganico.size(); i++){
+            scale = objetosOrganico[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (4, -objetosOrganico[i]->getTranslate()/.15, 0);
+                glRotatef(0+objetosOrganico[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosOrganico[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
         /********************************/
 
         /***********Basureros***************/

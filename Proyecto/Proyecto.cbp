@@ -74,13 +74,26 @@
 		<Unit filename="modelos/StackofPapers.obj" />
 		<Unit filename="modelos/bird.mtl" />
 		<Unit filename="modelos/bird.obj" />
-		<Unit filename="modelos/bird/_Black_1.jpg" />
-		<Unit filename="modelos/bird/_Paper_9.jpg" />
-		<Unit filename="modelos/plasticbottle.mtl" />
-		<Unit filename="modelos/plasticbottle.obj" />
-		<Unit filename="modelos/plasticflaske.mtl" />
-		<Unit filename="modelos/plasticflaske.obj" />
-		<Unit filename="modelos/trash/list1.jpg" />
+		<Unit filename="modelos/lata.mtl" />
+		<Unit filename="modelos/lata.obj" />
+		<Unit filename="modelos/manzana.mtl" />
+		<Unit filename="modelos/manzana.obj" />
+		<Unit filename="modelos/nubes.mtl" />
+		<Unit filename="modelos/nubes.obj" />
+		<Unit filename="modelos/pajaro.mtl" />
+		<Unit filename="modelos/pajaro.obj" />
+		<Unit filename="modelos/plastico.mtl" />
+		<Unit filename="modelos/plastico.obj" />
+		<Unit filename="modelos/sol.mtl" />
+		<Unit filename="modelos/sol.obj" />
+		<Unit filename="modelos/trashAluminio.mtl" />
+		<Unit filename="modelos/trashAluminio.obj" />
+		<Unit filename="modelos/trashOrganico.mtl" />
+		<Unit filename="modelos/trashOrganico.obj" />
+		<Unit filename="modelos/trashPapel.mtl" />
+		<Unit filename="modelos/trashPapel.obj" />
+		<Unit filename="modelos/trashPlastico.mtl" />
+		<Unit filename="modelos/trashPlastico.obj" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -58,7 +58,7 @@ bool start = true;
 bool playerLeft = false;
 bool playerRight = false;
 
-GLMmodel model[8];
+GLMmodel model[11];
 
 float x=1.0;
 float medidaArbol = 2.5;
@@ -100,30 +100,71 @@ void loadTexture(Image* image,int k){
 }
 
 void initModels(){
-    auxPath = fullPath + "modelos/bird.obj";
+
+    //Pajaro
+    auxPath = fullPath + "modelos/pajaro.obj";
     model[0] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[0]);
     glmVertexNormals(&model[0], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/plasticbottle.obj";
+    /********************Plastico****************************/
+    auxPath = fullPath + "modelos/plastico.obj";
     model[1] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[1]);
     glmVertexNormals(&model[1], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/plasticflaske.obj";
+    /********************Papel****************************/
+    auxPath = fullPath + "modelos/StackofPapers.obj";
     model[2] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[2]);
     glmVertexNormals(&model[2], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/StackofPapers.obj";
+    /********************Aluminio****************************/
+    auxPath = fullPath + "modelos/lata.obj";
     model[3] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[3]);
     glmVertexNormals(&model[3], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/trash.obj";
+    /***********************Organico*************************/
+    auxPath = fullPath + "modelos/manzana.obj";
     model[4] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[4]);
     glmVertexNormals(&model[4], 90.0, GL_TRUE);
+
+    /***********************Botes de basura*************************/
+    auxPath = fullPath + "modelos/trashPlastico.obj";
+    model[5] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[5]);
+    glmVertexNormals(&model[5], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trashPapel.obj";
+    model[6] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[6]);
+    glmVertexNormals(&model[6], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trashAluminio.obj";
+    model[7] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[7]);
+    glmVertexNormals(&model[7], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trashOrganico.obj";
+    model[8] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[8]);
+    glmVertexNormals(&model[8], 90.0, GL_TRUE);
+
+    /***********************Nubes*************************/
+    auxPath = fullPath + "modelos/nubes.obj";
+    model[9] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[9]);
+    glmVertexNormals(&model[9], 90.0, GL_TRUE);
+
+    /***********************Vidas*************************/
+    auxPath = fullPath + "modelos/vidas.obj";
+    model[10] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[10]);
+    glmVertexNormals(&model[9], 90.0, GL_TRUE);
+
+
 }
 
 void loadImage(string nombreImagen, int numImagen){
@@ -301,10 +342,10 @@ void display(){
 
     glBindTexture(GL_TEXTURE_2D, txtName[0]);
 
-    /*start = false;
+    start = false;
     menuInicial = false;
     menuNivel = false;
-    instrucciones = false;*/
+    instrucciones = false;
 
     if(start){
 
@@ -322,67 +363,109 @@ void display(){
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Pajaro
+        /***********Pajaro***************/
         glPushMatrix();
             glScalef(.7,.7,.7);
             glTranslatef (-movePajaroX, 1, movePajaroZ);
             glRotatef(0-rotatePajaro*40,0,1,0);
             glmDraw(&model[0], GLM_COLOR);
         glPopMatrix();
+        /********************************/
 
-        //Plastic Bottle
+        /***********Nubes***************/
+        glPushMatrix();
+            glScalef(1,1,1);
+            glTranslatef (2, 0, -1);
+            glmDraw(&model[9], GLM_COLOR);
+        glPopMatrix();
+
         glPushMatrix();
             glScalef(2,2,2);
-            glTranslatef (-1.5/2, -t/2, 0);
+            glTranslatef (-.5, 1, -1);
+            glmDraw(&model[9], GLM_COLOR);
+        glPopMatrix();
+        /********************************/
+
+        /***********Sol***************/
+        glPushMatrix();
+            glColor3ub(245, 241, 10);
+            glTranslatef (-2, 2, -3);
+            glutSolidSphere(0.8,40,40);
+        glPopMatrix();
+        /********************************/
+
+        /***********Plastico***************/
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (-3, -t/.2, 0);
             glRotatef(0+t*100,1,1,0);
             glmDraw(&model[1], GLM_COLOR);
         glPopMatrix();
+        /********************************/
 
-        //Plastic Flaske
+        /***********Papel***************/
         glPushMatrix();
             glScalef(.2,.2,.2);
             glTranslatef (-1, -t/.2, 0);
             glRotatef(0+t*100,1,1,0);
             glmDraw(&model[2], GLM_COLOR);
         glPopMatrix();
+        /********************************/
 
-        //Stack of paper
+        /***********Aluminio***************/
         glPushMatrix();
-            glScalef(.3,.3,.3);
-            glTranslatef (1.5, -t/.3, 0);
+            glScalef(.15,.15,.15);
+            glTranslatef (1.5, -t/.15, 0);
             glRotatef(0+t*100,1,1,0);
             glmDraw(&model[3], GLM_COLOR);
         glPopMatrix();
+        /********************************/
 
-        //Trash can1
+        /***********Organico***************/
         glPushMatrix();
-            glScalef(.2,.2,.2);
-            glTranslatef (-3, -16, 0);
+            glScalef(.15,.15,.15);
+            glTranslatef (4, -t/.15, 0);
+            glRotatef(0+t*100,1,1,0);
             glmDraw(&model[4], GLM_COLOR);
         glPopMatrix();
+        /********************************/
 
-        //Trash can2
+        /***********Basureros***************/
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-1, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (-3, -16.5, -1);
+            glmDraw(&model[5], GLM_COLOR);
         glPopMatrix();
 
-        //Trash can3
+        despliegaTexto("Plastico",-.75,-3.2,.00075,.00075);
+
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (1, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (-1, -16.5, -1);
+            glmDraw(&model[6], GLM_COLOR);
         glPopMatrix();
 
-        //Trash can4
+        despliegaTexto("Papel",-.3,-3.2,.00075,.00075);
+
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (3, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (1, -16.5, -1);
+            glmDraw(&model[7], GLM_COLOR);
         glPopMatrix();
 
-        //Lineas del trash hero
+        despliegaTexto("Aluminio",0,-3.2,.0007,.0007);
+
+        glPushMatrix();
+            glScalef(.2,.2,.2);
+            glTranslatef (3, -16.5, -1);
+            glmDraw(&model[8], GLM_COLOR);
+        glPopMatrix();
+
+        despliegaTexto("Organico",.4,-3.2,.0007,.0007);
+
+        /********************************/
+
+        /***********Lineas que sigue la basura***************/
         glBegin(GL_LINES);
             glVertex3f(-.8,1,-2.0);
             glVertex3f(-.8,-4,-2.0);
@@ -396,8 +479,10 @@ void display(){
             glVertex3f(.8,1,-2.0);
             glVertex3f(.8,-4,-2.0);
         glEnd();
+        /********************************/
 
 
+        //Para crear los troncos de los arboles
         GLUquadricObj *qobj;
         qobj = gluNewQuadric();
         GLuint startList = glGenLists(1);
@@ -407,13 +492,14 @@ void display(){
             gluCylinder(qobj,0.6,0.6,2,10,10);
         glEndList();
 
-
+        /***************Mundo*****************/
         glPushMatrix();
             glTranslatef(0,-7,-8);
             glPushMatrix();
 
                 glRotatef(x, 1.0, 0.0, 0.0);
 
+                /****************Arboles****************/
                 glPushMatrix();
                     glTranslatef(medidaArbol,medidaArbol,medidaArbol);
                     glColor3ub(102, 51, 0);
@@ -517,13 +603,67 @@ void display(){
                         glutSolidCone(1,1,10,10);
                     glPopMatrix();
                 glPopMatrix();
-
+                /****************Fin de arboles****************/
             glPopMatrix();
 
             glColor3ub(13, 145, 25);
             glutSolidSphere(5,40,40);
 
         glPopMatrix();
+        /***************Fin de mundo*****************/
+
+
+        /***********Seccion de vidas y puntaje***************/
+        glPushMatrix();
+            glColor3ub(199, 77, 36);
+            glTranslatef (.3, -4.7, -1);
+
+            glBegin(GL_QUADS);
+                glVertex2f(1.0f, 1.0f);
+                glVertex2f(2.5f, 1.0f);
+                glVertex2f(2.5f, 2.0f);
+                glVertex2f(1.0f, 2.0f);
+            glEnd();
+
+            glColor3ub(0, 0, 0);
+
+            glBegin(GL_LINE_STRIP);
+                glVertex2f(1.0f, 1.0f);
+                glVertex2f(2.5f, 1.0f);
+                glVertex2f(2.5f, 2.0f);
+                glVertex2f(1.0f, 2.0f);
+            glEnd();
+        glPopMatrix();
+
+        /***********Vidas***************/
+
+        despliegaTexto("Nivel 1",1.5,-2.7,.001,.001);
+        despliegaTexto("Puntos:",1.2,-2.95,.001,.001);
+        despliegaTexto("100/1000",1.65,-2.95,.001,.001);
+        despliegaTexto("Vidas:",1.2,-3.2,.001,.001);
+
+        //vida 3
+        glPushMatrix();
+            glTranslatef (1.75, -3.15, 0);
+            glScalef(.07,.07,.07);
+            glRotatef(0+rotatePajaro*100,1,1,0);
+            glmDraw(&model[10], GLM_COLOR);
+        glPopMatrix();
+        //vida 2
+        glPushMatrix();
+            glTranslatef (2, -3.15, 0);
+            glScalef(.07,.07,.07);
+            glRotatef(0+rotatePajaro*100,1,1,0);
+            glmDraw(&model[10], GLM_COLOR);
+        glPopMatrix();
+         //vida 1
+        glPushMatrix();
+            glTranslatef (2.25, -3.15, 0);
+            glScalef(.07,.07,.07);
+            glRotatef(0+rotatePajaro*100,1,1,0);
+            glmDraw(&model[10], GLM_COLOR);
+        glPopMatrix();
+        /********************************/
 
     }
 

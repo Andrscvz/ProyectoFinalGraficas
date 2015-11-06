@@ -60,6 +60,9 @@ bool playerRight = false;
 
 GLMmodel model[8];
 
+float x=1.0;
+float medidaArbol = 2.5;
+
 string auxPath;
 
 //STRINGS
@@ -159,6 +162,9 @@ void reshape (int w, int h){
 
 void myTimer(int i) {
     if (i ==1){
+
+        x=x+1;
+
         if(t > 3){
             t = -1;
         }
@@ -295,10 +301,10 @@ void display(){
 
     glBindTexture(GL_TEXTURE_2D, txtName[0]);
 
-    start = false;
+    /*start = false;
     menuInicial = false;
     menuNivel = false;
-    instrucciones = false;
+    instrucciones = false;*/
 
     if(start){
 
@@ -320,14 +326,14 @@ void display(){
         glPushMatrix();
             glScalef(.7,.7,.7);
             glTranslatef (-movePajaroX, 1, movePajaroZ);
-            glRotatef(0+rotatePajaro*40,0,1,0);
+            glRotatef(0-rotatePajaro*40,0,1,0);
             glmDraw(&model[0], GLM_COLOR);
         glPopMatrix();
 
         //Plastic Bottle
         glPushMatrix();
-            glScalef(1.5,1.5,1.5);
-            glTranslatef (1, -t/1.5, 0);
+            glScalef(2,2,2);
+            glTranslatef (-1.5/2, -t/2, 0);
             glRotatef(0+t*100,1,1,0);
             glmDraw(&model[1], GLM_COLOR);
         glPopMatrix();
@@ -351,37 +357,174 @@ void display(){
         //Trash can1
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-4, -16, 0);
+            glTranslatef (-3, -16, 0);
             glmDraw(&model[4], GLM_COLOR);
         glPopMatrix();
 
         //Trash can2
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-2, -16, 0);
+            glTranslatef (-1, -16, 0);
             glmDraw(&model[4], GLM_COLOR);
         glPopMatrix();
 
         //Trash can3
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (0, -16, 0);
+            glTranslatef (1, -16, 0);
             glmDraw(&model[4], GLM_COLOR);
         glPopMatrix();
 
         //Trash can4
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (2, -16, 0);
+            glTranslatef (3, -16, 0);
             glmDraw(&model[4], GLM_COLOR);
         glPopMatrix();
 
-        //Trash can5
+        //Lineas del trash hero
+        glBegin(GL_LINES);
+            glVertex3f(-.8,1,-2.0);
+            glVertex3f(-.8,-4,-2.0);
+
+            glVertex3f(-.3,1,-2.0);
+            glVertex3f(-.3,-4,-2.0);
+
+            glVertex3f(.3,1,-2.0);
+            glVertex3f(.3,-4,-2.0);
+
+            glVertex3f(.8,1,-2.0);
+            glVertex3f(.8,-4,-2.0);
+        glEnd();
+
+
+        GLUquadricObj *qobj;
+        qobj = gluNewQuadric();
+        GLuint startList = glGenLists(1);
+        gluQuadricDrawStyle(qobj, GLU_FILL);
+            gluQuadricNormals(qobj, GLU_SMOOTH);
+            glNewList(startList, GL_COMPILE);
+            gluCylinder(qobj,0.6,0.6,2,10,10);
+        glEndList();
+
+
         glPushMatrix();
-            glScalef(.2,.2,.2);
-            glTranslatef (4, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef(0,-7,-8);
+            glPushMatrix();
+
+                glRotatef(x, 1.0, 0.0, 0.0);
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol,medidaArbol,medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(330, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol,medidaArbol,medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(330, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol,-medidaArbol, medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(30, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol, -medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(140, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol,medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(220, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol,medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(220, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol, -medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(140, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol,-medidaArbol,medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(30, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+            glPopMatrix();
+
+            glColor3ub(13, 145, 25);
+            glutSolidSphere(5,40,40);
+
         glPopMatrix();
+
     }
 
     glutSwapBuffers();

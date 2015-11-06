@@ -22,13 +22,12 @@
 #define GLDEBUG
 */
 #include "glmint.h"
-#include "glmimg_jpg.c"
 
 
-
+/*
 #undef HAVE_LIBJPEG
-//#undef HAVE_LIBSDL_IMAGE
-//
+#undef HAVE_LIBSDL_IMAGE
+*/
 /* WARNING: GLOBAL VARIABLES */
 GLenum _glmTextureTarget = GL_TEXTURE_2D;
 static GLint gl_max_texture_size;
@@ -200,19 +199,13 @@ glmLoadTexture(const char *filename, GLboolean alpha, GLboolean repeat, GLboolea
 
     if(glm_do_init)
 	glmImgInit();
-    
+
+    /* fallback solution (PPM only) */
     data = glmReadPPM(filename, alpha, &width, &height, &type);
     if(data != NULL) {
-        DBG_(__glmWarning("glmLoadTexture(): got JPG for %s",filename));
-        goto DONE;
+	DBG_(__glmWarning("glmLoadTexture(): got PPM for %s",filename));
+	goto DONE;
     }
-
-//    /* fallback solution (PPM only) */
-//    data = glmReadPPM(filename, alpha, &width, &height, &type);
-//    if(data != NULL) {
-//	DBG_(__glmWarning("glmLoadTexture(): got PPM for %s",filename));
-//	goto DONE;
-//    }
 
 #ifdef HAVE_DEVIL
     data = glmReadDevIL(filename, alpha, &width, &height, &type);

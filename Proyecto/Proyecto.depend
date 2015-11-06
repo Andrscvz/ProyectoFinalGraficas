@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glm.c
+1366619761 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glm.c
 	"config.h"
 	<math.h>
 	<stdio.h>
@@ -9,15 +9,15 @@
 	"glm.h"
 	"glmint.h"
 
-1446507046 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glm.h
+1191935142 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glm.h
 	<OpenGL/gl.h>
 	<OpenGL/glu.h>
 	<GL/gl.h>
 	<GL/glu.h>
 
-1446507046 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmint.h
+1114193279 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmint.h
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glm_util.c
+1074086390 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glm_util.c
 	"config.h"
 	<stdlib.h>
 	<stdarg.h>
@@ -26,7 +26,7 @@
 	"glm.h"
 	"glmint.h"
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg.c
+1446521147 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg.c
 	"config.h"
 	<stdio.h>
 	<stdlib.h>
@@ -40,7 +40,6 @@
 	<GL/glext.h>
 	"glm.h"
 	"glmint.h"
-	"glmimg_jpg.c"
 
 1446507046 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_jpg.c
 	"config.h"
@@ -52,14 +51,14 @@
 	<stdlib.h>
 	<jpeglib.h>
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_devil.c
+1114175491 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_devil.c
 	"config.h"
 	"glm.h"
 	"glmint.h"
 	<IL/il.h>
 	<stdlib.h>
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_jpg.c
+1074093362 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_jpg.c
 	"config.h"
 	"glm.h"
 	"glmint.h"
@@ -69,7 +68,7 @@
 	<stdlib.h>
 	<jpeglib.h>
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_png.c
+1074093362 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_png.c
 	"config.h"
 	"glm.h"
 	"glmint.h"
@@ -78,19 +77,19 @@
 	<stdlib.h>
 	<png.h>
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_sdl.c
+1074093362 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_sdl.c
 	"config.h"
 	"glm.h"
 	"glmint.h"
 	<SDL/SDL_image.h>
 
-1446507046 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_sim.c
+1074093362 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\glmimg_sim.c
 	"config.h"
 	"glm.h"
 	"glmint.h"
 	<simage.h>
 
-1446513978 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\main.cpp
+1446664509 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\main.cpp
 	<iostream>
 	<GLUT/glut.h>
 	<windows.h>

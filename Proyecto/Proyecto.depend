@@ -89,7 +89,7 @@
 	"glmint.h"
 	<simage.h>
 
-1446787529 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\main.cpp
+1446853961 source:d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\main.cpp
 	<iostream>
 	<GLUT/glut.h>
 	<windows.h>
@@ -102,6 +102,7 @@
 	<fstream>
 	"glm.h"
 	"imageloader.h"
+	"Objeto.h"
 
 1439998410 c:\program files (x86)\codeblocks\glut\include\gl\glut.h
 	<windows.h>
@@ -111,4 +112,6 @@
 1446507046 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\imageloader.h
 	<assert.h>
 	<fstream>
+
+1446846274 d:\dropbox\documentos\carrera\9 semestre\graficas\proyectofinalgraficas\proyecto\objeto.h
 

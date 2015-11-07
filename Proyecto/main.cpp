@@ -65,11 +65,14 @@ bool instrucciones = false;
 bool start = true;
 bool playerLeft = false;
 bool playerRight = false;
+bool juegoIniciado = true;
 
 GLMmodel model[11];
 
 float x=1.0;
 float medidaArbol = 2.5;
+int nivel = 1;
+
 
 string auxPath;
 
@@ -120,40 +123,24 @@ void initModels(){
     model[1] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[1]);
     glmVertexNormals(&model[1], 90.0, GL_TRUE);
-    Objeto * plastico = new Objeto(.2,1,-1);
-    objetosPlastico.push_back(plastico);
-    plastico = new Objeto(.2,1,0);
-    objetosPlastico.push_back(plastico);
 
     /********************Papel****************************/
     auxPath = fullPath + "modelos/StackofPapers.obj";
     model[2] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[2]);
     glmVertexNormals(&model[2], 90.0, GL_TRUE);
-    Objeto * papel = new Objeto(.2,2,-1);
-    objetosPapel.push_back(papel);
-    papel = new Objeto(.2,2,0);
-    objetosPapel.push_back(papel);
 
     /********************Aluminio****************************/
     auxPath = fullPath + "modelos/lata.obj";
     model[3] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[3]);
     glmVertexNormals(&model[3], 90.0, GL_TRUE);
-    Objeto * aluminio = new Objeto(.15,3,-1);
-    objetosAluminio.push_back(aluminio);
-    aluminio = new Objeto(.15,3,0);
-    objetosAluminio.push_back(aluminio);
 
     /***********************Organico*************************/
     auxPath = fullPath + "modelos/manzana.obj";
     model[4] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[4]);
     glmVertexNormals(&model[4], 90.0, GL_TRUE);
-    Objeto * organico = new Objeto(.15,4,-1);
-    objetosOrganico.push_back(organico);
-    organico = new Objeto(.15,4,0);
-    objetosOrganico.push_back(organico);
 
     /***********************Botes de basura*************************/
     auxPath = fullPath + "modelos/trashPlastico.obj";
@@ -223,6 +210,50 @@ void reshape (int w, int h){
     glTranslatef(0.0f, 1.0f, -6.0f);
 }
 
+void iniciaNivel(){
+    Objeto * obj;
+
+    objetosPlastico.clear();
+    objetosOrganico.clear();
+    objetosAluminio.clear();
+    objetosPapel.clear();
+
+    int random;
+
+    if(nivel == 1 || nivel == 2 || nivel == 3){
+        delta = 0.1;
+    }else{
+        delta = 0.2;
+    }
+
+    //Plastico
+    for(int i = 0; i < nivel; i++){
+        random = (rand()%100)/10.0;
+        obj = new Objeto(.2,1,-1-random);
+        objetosPlastico.push_back(obj);
+    }
+
+    //Papel
+    for(int i = 0; i < nivel; i++){
+        random = (rand()%100)/10.0;
+        obj = new Objeto(.2,2,-1-random);
+        objetosPapel.push_back(obj);
+    }
+
+    //Aluminio
+    for(int i = 0; i < nivel; i++){
+        obj = new Objeto(.15,3,-1-random);
+        objetosAluminio.push_back(obj);
+    }
+
+    //Organico
+    for(int i = 0; i < nivel; i++){
+        random = (rand()%100)/10.0;
+        obj = new Objeto(.15,4,-1-random);
+        objetosOrganico.push_back(obj);
+    }
+}
+
 
 void myTimer(int i) {
     if (i ==1){
@@ -230,10 +261,12 @@ void myTimer(int i) {
         x=x+1;
 
         /*********************Objetos que caen****************************/
+        int random;
         //Para que cada objeto se mueva Plastico
         for(int i = 0; i < objetosPlastico.size(); i++){
-            if(objetosPlastico[i]->getTranslate() > 3){
-                objetosPlastico[i]->setTranslate(-1);
+            if(objetosPlastico[i]->getTranslate() >= 3){
+                random = (rand()%100)/10.0;
+                objetosPlastico[i]->setTranslate(-1 - random);
             }
             objetosPlastico[i]->setTranslate(objetosPlastico[i]->getTranslate() + delta);
         }
@@ -241,7 +274,8 @@ void myTimer(int i) {
         //Para que cada objeto se mueva Papel
         for(int i = 0; i < objetosPapel.size(); i++){
             if(objetosPapel[i]->getTranslate() > 3){
-                objetosPapel[i]->setTranslate(-1);
+                random = (rand()%100)/10.0;
+                objetosPapel[i]->setTranslate(-1- random);
             }
             objetosPapel[i]->setTranslate(objetosPapel[i]->getTranslate() + delta);
         }
@@ -249,7 +283,8 @@ void myTimer(int i) {
         //Para que cada objeto se mueva Aluminio
         for(int i = 0; i < objetosAluminio.size(); i++){
             if(objetosAluminio[i]->getTranslate() > 3){
-                objetosAluminio[i]->setTranslate(-1);
+                random = (rand()%100)/10.0;
+                objetosAluminio[i]->setTranslate(-1 - random);
             }
             objetosAluminio[i]->setTranslate(objetosAluminio[i]->getTranslate() + delta);
         }
@@ -257,7 +292,8 @@ void myTimer(int i) {
         //Para que cada objeto se mueva Organico
         for(int i = 0; i < objetosOrganico.size(); i++){
             if(objetosOrganico[i]->getTranslate() > 3){
-                objetosOrganico[i]->setTranslate(-1);
+                random = (rand()%100)/10.0;
+                objetosOrganico[i]->setTranslate(-1 - random);
             }
             objetosOrganico[i]->setTranslate(objetosOrganico[i]->getTranslate() + delta);
         }
@@ -413,6 +449,12 @@ void display(){
     } else{
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if(juegoIniciado){
+            nivel = 10;  /****************************************************PARA CAMBIAR DE NIVEL******************************/
+            iniciaNivel();
+            juegoIniciado = !juegoIniciado;
+        }
 
         /***********Pajaro***************/
         glPushMatrix();
@@ -755,7 +797,7 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
                 menuInicial=true;
                 display();
             }
-
+            //juegoIniciado = true;   //Para reiniciar o iniciar el juego
             break;
 
         default:

@@ -7,12 +7,12 @@
 //
 #include <iostream>
 #ifdef __APPLE__
-
+#include <GLUT/glut.h>
 #else
 #include <windows.h>
 #include <GL/glut.h>
 #endif
-#include <GLUT/glut.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,6 +24,7 @@
 
 #include "glm.h"
 #include "imageloader.h"
+#include "Objeto.h"
 using namespace std;
 
 std::ostringstream strStream;
@@ -39,6 +40,13 @@ bool pajaroXtof = true;
 float movePajaroZ = 0;
 bool pajaroZtof = true;
 float rotatePajaro = 0;
+
+//Objetos que van a caer
+vector<Objeto *> objetosPlastico;
+vector<Objeto *> objetosPapel;
+vector<Objeto *> objetosAluminio;
+vector<Objeto *> objetosOrganico;
+
 
 //INTEGERS
 int windowWidth = 800, windowHeight = 800;
@@ -57,8 +65,14 @@ bool instrucciones = false;
 bool start = true;
 bool playerLeft = false;
 bool playerRight = false;
+bool juegoIniciado = true;
 
-GLMmodel model[8];
+GLMmodel model[11];
+
+float x=1.0;
+float medidaArbol = 2.5;
+int nivel = 1;
+
 
 string auxPath;
 
@@ -97,30 +111,70 @@ void loadTexture(Image* image,int k){
 }
 
 void initModels(){
-    auxPath = fullPath + "modelos/bird.obj";
+
+    //Pajaro
+    auxPath = fullPath + "modelos/pajaro.obj";
     model[0] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[0]);
     glmVertexNormals(&model[0], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/plasticbottle.obj";
+    /********************Plastico****************************/
+    auxPath = fullPath + "modelos/plastico.obj";
     model[1] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[1]);
     glmVertexNormals(&model[1], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/plasticflaske.obj";
+    /********************Papel****************************/
+    auxPath = fullPath + "modelos/StackofPapers.obj";
     model[2] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[2]);
     glmVertexNormals(&model[2], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/StackofPapers.obj";
+    /********************Aluminio****************************/
+    auxPath = fullPath + "modelos/lata.obj";
     model[3] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[3]);
     glmVertexNormals(&model[3], 90.0, GL_TRUE);
 
-    auxPath = fullPath + "modelos/trash.obj";
+    /***********************Organico*************************/
+    auxPath = fullPath + "modelos/manzana.obj";
     model[4] = *glmReadOBJ(&auxPath[0]);
     glmUnitize(&model[4]);
     glmVertexNormals(&model[4], 90.0, GL_TRUE);
+
+    /***********************Botes de basura*************************/
+    auxPath = fullPath + "modelos/trashPlastico.obj";
+    model[5] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[5]);
+    glmVertexNormals(&model[5], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trashPapel.obj";
+    model[6] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[6]);
+    glmVertexNormals(&model[6], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trashAluminio.obj";
+    model[7] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[7]);
+    glmVertexNormals(&model[7], 90.0, GL_TRUE);
+
+    auxPath = fullPath + "modelos/trashOrganico.obj";
+    model[8] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[8]);
+    glmVertexNormals(&model[8], 90.0, GL_TRUE);
+
+    /***********************Nubes*************************/
+    auxPath = fullPath + "modelos/nubes.obj";
+    model[9] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[9]);
+    glmVertexNormals(&model[9], 90.0, GL_TRUE);
+
+    /***********************Vidas*************************/
+    auxPath = fullPath + "modelos/vidas.obj";
+    model[10] = *glmReadOBJ(&auxPath[0]);
+    glmUnitize(&model[10]);
+    glmVertexNormals(&model[9], 90.0, GL_TRUE);
+
 }
 
 void loadImage(string nombreImagen, int numImagen){
@@ -156,13 +210,93 @@ void reshape (int w, int h){
     glTranslatef(0.0f, 1.0f, -6.0f);
 }
 
+void iniciaNivel(){
+    Objeto * obj;
+
+    objetosPlastico.clear();
+    objetosOrganico.clear();
+    objetosAluminio.clear();
+    objetosPapel.clear();
+
+    int random;
+
+    if(nivel == 1 || nivel == 2 || nivel == 3){
+        delta = 0.1;
+    }else{
+        delta = 0.2;
+    }
+
+    //Plastico
+    for(int i = 0; i < nivel; i++){
+        random = (rand()%100)/10.0;
+        obj = new Objeto(.2,1,-1-random);
+        objetosPlastico.push_back(obj);
+    }
+
+    //Papel
+    for(int i = 0; i < nivel; i++){
+        random = (rand()%100)/10.0;
+        obj = new Objeto(.2,2,-1-random);
+        objetosPapel.push_back(obj);
+    }
+
+    //Aluminio
+    for(int i = 0; i < nivel; i++){
+        obj = new Objeto(.15,3,-1-random);
+        objetosAluminio.push_back(obj);
+    }
+
+    //Organico
+    for(int i = 0; i < nivel; i++){
+        random = (rand()%100)/10.0;
+        obj = new Objeto(.15,4,-1-random);
+        objetosOrganico.push_back(obj);
+    }
+}
+
 
 void myTimer(int i) {
     if (i ==1){
-        if(t > 3){
-            t = -1;
+        //Rotacion del mundo
+        x=x+1;
+
+        /*********************Objetos que caen****************************/
+        int random;
+        //Para que cada objeto se mueva Plastico
+        for(int i = 0; i < objetosPlastico.size(); i++){
+            if(objetosPlastico[i]->getTranslate() >= 3){
+                random = (rand()%100)/10.0;
+                objetosPlastico[i]->setTranslate(-1 - random);
+            }
+            objetosPlastico[i]->setTranslate(objetosPlastico[i]->getTranslate() + delta);
         }
-        t += delta;
+
+        //Para que cada objeto se mueva Papel
+        for(int i = 0; i < objetosPapel.size(); i++){
+            if(objetosPapel[i]->getTranslate() > 3){
+                random = (rand()%100)/10.0;
+                objetosPapel[i]->setTranslate(-1- random);
+            }
+            objetosPapel[i]->setTranslate(objetosPapel[i]->getTranslate() + delta);
+        }
+
+        //Para que cada objeto se mueva Aluminio
+        for(int i = 0; i < objetosAluminio.size(); i++){
+            if(objetosAluminio[i]->getTranslate() > 3){
+                random = (rand()%100)/10.0;
+                objetosAluminio[i]->setTranslate(-1 - random);
+            }
+            objetosAluminio[i]->setTranslate(objetosAluminio[i]->getTranslate() + delta);
+        }
+
+        //Para que cada objeto se mueva Organico
+        for(int i = 0; i < objetosOrganico.size(); i++){
+            if(objetosOrganico[i]->getTranslate() > 3){
+                random = (rand()%100)/10.0;
+                objetosOrganico[i]->setTranslate(-1 - random);
+            }
+            objetosOrganico[i]->setTranslate(objetosOrganico[i]->getTranslate() + delta);
+        }
 
         rotatePajaro += 0.11;
 
@@ -316,72 +450,328 @@ void display(){
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Pajaro
+        if(juegoIniciado){
+            nivel = 10;  /****************************************************PARA CAMBIAR DE NIVEL******************************/
+            iniciaNivel();
+            juegoIniciado = !juegoIniciado;
+        }
+
+        /***********Pajaro***************/
         glPushMatrix();
             glScalef(.7,.7,.7);
             glTranslatef (-movePajaroX, 1, movePajaroZ);
-            glRotatef(0+rotatePajaro*40,0,1,0);
+            glRotatef(0-rotatePajaro*40,0,1,0);
             glmDraw(&model[0], GLM_COLOR);
         glPopMatrix();
+        /********************************/
 
-        //Plastic Bottle
+        /***********Nubes***************/
         glPushMatrix();
-            glScalef(1.5,1.5,1.5);
-            glTranslatef (1, -t/1.5, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[1], GLM_COLOR);
+            glScalef(1,1,1);
+            glTranslatef (2, 0, -1);
+            glmDraw(&model[9], GLM_COLOR);
         glPopMatrix();
 
-        //Plastic Flaske
+        glPushMatrix();
+            glScalef(2,2,2);
+            glTranslatef (-.5, 1, -1);
+            glmDraw(&model[9], GLM_COLOR);
+        glPopMatrix();
+        /********************************/
+
+        /***********Sol***************/
+        glPushMatrix();
+            glColor3ub(245, 241, 10);
+            glTranslatef (-2, 2, -3);
+            glutSolidSphere(0.8,40,40);
+        glPopMatrix();
+        /********************************/
+
+        double scale;
+
+        /***********Plastico***************/
+        for(int i = 0; i < objetosPlastico.size(); i++){
+            scale = objetosPlastico[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (-3, -objetosPlastico[i]->getTranslate()/scale, 0);
+                glRotatef(0+objetosPlastico[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosPlastico[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
+        /********************************/
+
+        /***********Papel***************/
+        for(int i = 0; i < objetosPapel.size(); i++){
+            scale = objetosPapel[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (-1, -objetosPapel[i]->getTranslate()/scale, 0);
+                glRotatef(0+objetosPapel[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosPapel[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
+        /********************************/
+
+        /***********Aluminio***************/
+        for(int i = 0; i < objetosAluminio.size(); i++){
+            scale = objetosAluminio[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (1.5, -objetosAluminio[i]->getTranslate()/scale, 0);
+                glRotatef(0+objetosAluminio[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosAluminio[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
+        /********************************/
+
+        /***********Organico***************/
+        for(int i = 0; i < objetosOrganico.size(); i++){
+            scale = objetosOrganico[i]->getScale();
+            glPushMatrix();
+                glScalef(scale,scale,scale);
+                glTranslatef (4, -objetosOrganico[i]->getTranslate()/.15, 0);
+                glRotatef(0+objetosOrganico[i]->getTranslate()*100,1,1,0);
+                glmDraw(&model[objetosOrganico[i]->getModel()], GLM_COLOR);
+            glPopMatrix();
+        }
+        /********************************/
+
+        /***********Basureros***************/
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-1, -t/.2, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[2], GLM_COLOR);
+            glTranslatef (-3, -16.5, -1);
+            glmDraw(&model[5], GLM_COLOR);
         glPopMatrix();
 
-        //Stack of paper
-        glPushMatrix();
-            glScalef(.3,.3,.3);
-            glTranslatef (1.5, -t/.3, 0);
-            glRotatef(0+t*100,1,1,0);
-            glmDraw(&model[3], GLM_COLOR);
-        glPopMatrix();
+        despliegaTexto("Plastico",-.75,-3.2,.00075,.00075);
 
-        //Trash can1
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-4, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (-1, -16.5, -1);
+            glmDraw(&model[6], GLM_COLOR);
         glPopMatrix();
 
-        //Trash can2
+        despliegaTexto("Papel",-.3,-3.2,.00075,.00075);
+
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (-2, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (1, -16.5, -1);
+            glmDraw(&model[7], GLM_COLOR);
         glPopMatrix();
 
-        //Trash can3
+        despliegaTexto("Aluminio",0,-3.2,.0007,.0007);
+
         glPushMatrix();
             glScalef(.2,.2,.2);
-            glTranslatef (0, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (3, -16.5, -1);
+            glmDraw(&model[8], GLM_COLOR);
         glPopMatrix();
 
-        //Trash can4
+        despliegaTexto("Organico",.4,-3.2,.0007,.0007);
+
+        /********************************/
+
+        /***********Lineas que sigue la basura***************/
+        glBegin(GL_LINES);
+            glVertex3f(-.8,1,-2.0);
+            glVertex3f(-.8,-4,-2.0);
+
+            glVertex3f(-.3,1,-2.0);
+            glVertex3f(-.3,-4,-2.0);
+
+            glVertex3f(.3,1,-2.0);
+            glVertex3f(.3,-4,-2.0);
+
+            glVertex3f(.8,1,-2.0);
+            glVertex3f(.8,-4,-2.0);
+        glEnd();
+        /********************************/
+
+
+        //Para crear los troncos de los arboles
+        GLUquadricObj *qobj;
+        qobj = gluNewQuadric();
+        GLuint startList = glGenLists(1);
+        gluQuadricDrawStyle(qobj, GLU_FILL);
+            gluQuadricNormals(qobj, GLU_SMOOTH);
+            glNewList(startList, GL_COMPILE);
+            gluCylinder(qobj,0.6,0.6,2,10,10);
+        glEndList();
+
+        /***************Mundo*****************/
         glPushMatrix();
-            glScalef(.2,.2,.2);
-            glTranslatef (2, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef(0,-7,-8);
+            glPushMatrix();
+
+                glRotatef(x, 1.0, 0.0, 0.0);
+
+                /****************Arboles****************/
+                glPushMatrix();
+                    glTranslatef(medidaArbol,medidaArbol,medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(330, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol,medidaArbol,medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(330, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol,-medidaArbol, medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(30, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol, -medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(140, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol,medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(220, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(-medidaArbol,medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(220, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol, -medidaArbol,-medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(140, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+
+                glPushMatrix();
+                    glTranslatef(medidaArbol,-medidaArbol,medidaArbol);
+                    glColor3ub(102, 51, 0);
+                    glRotatef(30, 1.0, 0.0, 0.0);
+                    glCallList(startList);
+                    glPushMatrix();
+                        glTranslatef(0,0,2);
+                        glRotatef(350, 1.0, 0.0, 0.0);
+                        glColor3ub(13, 129, 25);
+                        glutSolidCone(1,1,10,10);
+                    glPopMatrix();
+                glPopMatrix();
+                /****************Fin de arboles****************/
+            glPopMatrix();
+
+            glColor3ub(13, 145, 25);
+            glutSolidSphere(5,40,40);
+
+        glPopMatrix();
+        /***************Fin de mundo*****************/
+
+
+        /***********Seccion de vidas y puntaje***************/
+        glPushMatrix();
+            glColor3ub(199, 77, 36);
+            glTranslatef (.3, -4.7, -1);
+
+            glBegin(GL_QUADS);
+                glVertex2f(1.0f, 1.0f);
+                glVertex2f(2.5f, 1.0f);
+                glVertex2f(2.5f, 2.0f);
+                glVertex2f(1.0f, 2.0f);
+            glEnd();
+
+            glColor3ub(0, 0, 0);
+
+            glBegin(GL_LINE_STRIP);
+                glVertex2f(1.0f, 1.0f);
+                glVertex2f(2.5f, 1.0f);
+                glVertex2f(2.5f, 2.0f);
+                glVertex2f(1.0f, 2.0f);
+            glEnd();
         glPopMatrix();
 
-        //Trash can5
+        /***********Vidas***************/
+
+        despliegaTexto("Nivel 1",1.5,-2.7,.001,.001);
+        despliegaTexto("Puntos:",1.2,-2.95,.001,.001);
+        despliegaTexto("100/1000",1.65,-2.95,.001,.001);
+        despliegaTexto("Vidas:",1.2,-3.2,.001,.001);
+
+        //vida 3
         glPushMatrix();
-            glScalef(.2,.2,.2);
-            glTranslatef (4, -16, 0);
-            glmDraw(&model[4], GLM_COLOR);
+            glTranslatef (1.75, -3.15, 0);
+            glScalef(.07,.07,.07);
+            glRotatef(0+rotatePajaro*100,1,1,0);
+            glmDraw(&model[10], GLM_COLOR);
         glPopMatrix();
+        //vida 2
+        glPushMatrix();
+            glTranslatef (2, -3.15, 0);
+            glScalef(.07,.07,.07);
+            glRotatef(0+rotatePajaro*100,1,1,0);
+            glmDraw(&model[10], GLM_COLOR);
+        glPopMatrix();
+         //vida 1
+        glPushMatrix();
+            glTranslatef (2.25, -3.15, 0);
+            glScalef(.07,.07,.07);
+            glRotatef(0+rotatePajaro*100,1,1,0);
+            glmDraw(&model[10], GLM_COLOR);
+        glPopMatrix();
+        /********************************/
+
     }
 
     glutSwapBuffers();
@@ -407,7 +797,7 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
                 menuInicial=true;
                 display();
             }
-
+            //juegoIniciado = true;   //Para reiniciar o iniciar el juego
             break;
 
         default:

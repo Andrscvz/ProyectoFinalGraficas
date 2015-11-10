@@ -220,10 +220,14 @@ void iniciaNivel(){
 
     int random;
 
-    if(nivel == 1 || nivel == 2 || nivel == 3){
+    if(nivel == 1 ){
+        delta = 0.05;
+    }else if( nivel == 2){
+        delta = 0.07;
+    }else if( nivel == 3){
         delta = 0.1;
     }else{
-        delta = 0.2;
+        delta = 0.13;
     }
 
     //Plastico
@@ -372,18 +376,20 @@ void mostrarMenu(){
         glColor3ub(0, 0, 0);
         if(menuInicial)
             despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
-
-
+        else if(menuNivel)
+            despliegaTexto("Nivel 1",-2,0.4,0.0025,0.0025);
         //Instrucciones
         glColor3ub(0, 0, 0);
         if(menuInicial)
             despliegaTexto(instruccionesTxt,-2,-1.05,0.0025,0.0025);
-
+        else if(menuNivel)
+            despliegaTexto("Nivel 2",-2,-1.05,0.0025,0.0025);
         //Salir
         glColor3ub(0, 0, 0);
         if(menuInicial)
             despliegaTexto(salirTxt,-2,-2.7,0.005,0.005);
-
+        else if(menuNivel)
+            despliegaTexto("Nivel 3",-2,-2.7,0.0025,0.0025);
     //if(menuNivel)
     //  opcionVolver();
 
@@ -429,10 +435,10 @@ void display(){
 
     glBindTexture(GL_TEXTURE_2D, txtName[0]);
 
-    start = false;
-    menuInicial = false;
-    menuNivel = false;
-    instrucciones = false;
+    //start = false;
+    //menuInicial = false;
+    //menuNivel = false;
+    //instrucciones = false;
 
     if(start){
 
@@ -451,7 +457,7 @@ void display(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if(juegoIniciado){
-            nivel = 10;  /****************************************************PARA CAMBIAR DE NIVEL******************************/
+            //nivel = 3;  /****************************************************PARA CAMBIAR DE NIVEL******************************/
             iniciaNivel();
             juegoIniciado = !juegoIniciado;
         }
@@ -744,7 +750,7 @@ void display(){
 
         /***********Vidas***************/
 
-        despliegaTexto("Nivel 1",1.5,-2.7,.001,.001);
+        despliegaTexto("Nivel "+to_string(nivel),1.5,-2.7,.001,.001);
         despliegaTexto("Puntos:",1.2,-2.95,.001,.001);
         despliegaTexto("100/1000",1.65,-2.95,.001,.001);
         despliegaTexto("Vidas:",1.2,-3.2,.001,.001);
@@ -818,36 +824,36 @@ void myMouse(int button, int state, int x, int y)
             yUp_2 = windowHeight*332/800; yDown_2 = windowHeight*448/800;
             yUp_3 = windowHeight*574/800; yDown_3 = windowHeight*689/800;
             if(x >= xIzq && x <= xDer) {
-                if(y >= yUp_1 && y <= yDown_1) { // JUGAR
+                if(y >= yUp_1 && y <= yDown_1) { // JUGAR //Nivel 1
                     if(menuInicial) { //
                         //glutTimerFunc(50, myTimer, 1);
                         menuInicial = false;
-                        menuNivel = false;
+                        menuNivel = true;
                     }
                     else if(menuNivel) {
-
+                        nivel = 1;
 
                         menuNivel = false;
                     }
                 }
-                else if(y >= yUp_2 && y <= yDown_2) { //INSTRUCCIONES
+                else if(y >= yUp_2 && y <= yDown_2) { //INSTRUCCIONES //Nivel 2
                     if(menuInicial) {
                         menuInicial = false;
                         instrucciones = true;
                     }
                     else if(menuNivel) {
-
+                        nivel = 2;
 
                         menuNivel = false;
                     }
                 }
-                else if(y >= yUp_3 && y <= yDown_3) { // SALIR
+                else if(y >= yUp_3 && y <= yDown_3) { // SALIR //Nivel 3
                     if(menuInicial) {
                         exit(0);
                     }
                     else if(menuNivel) {
 
-
+                        nivel = 3;
                         menuNivel = false;
                     }
                 }

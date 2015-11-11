@@ -51,6 +51,8 @@ vector<Objeto *> objetosOrganico;
 //INTEGERS
 int windowWidth = 800, windowHeight = 800;
 int texNumber = -1;
+int score = 0;
+
 
 //FLOAT
 float velX,velY;
@@ -66,13 +68,29 @@ bool start = true;
 bool playerLeft = false;
 bool playerRight = false;
 bool juegoIniciado = true;
+bool seleccion_1 = false, seleccion_2 = false, seleccion_3 = false, seleccion_v = false;
+bool btn = false;
+
+
+/*** VERIFICAR ITERACION ***/
+bool countOncePointAluminium = true;
+bool reduceOnceLifeInAlum = true;
+
+bool countOncePointPlastico = true;
+bool reduceOnceLifeInPlastico = true;
+
+bool countOncePointPapel = true;
+bool reduceOnceLifeInPapel = true;
+
+bool countOncePointOrganico = true;
+bool reduceOnceLifeInOrganico = true;
 
 GLMmodel model[11];
 
 float x=1.0;
 float medidaArbol = 2.5;
 int nivel = 1;
-
+int lives = 3;
 
 string auxPath;
 
@@ -221,13 +239,13 @@ void iniciaNivel(){
     int random;
 
     if(nivel == 1 ){
-        delta = 0.05;
-    }else if( nivel == 2){
         delta = 0.07;
-    }else if( nivel == 3){
+    }else if( nivel == 2){
         delta = 0.1;
+    }else if( nivel == 3){
+        delta = 0.12;
     }else{
-        delta = 0.13;
+        delta = 0.15;
     }
 
     //Plastico
@@ -267,38 +285,94 @@ void myTimer(int i) {
         /*********************Objetos que caen****************************/
         int random;
         //Para que cada objeto se mueva Plastico
+        reduceOnceLifeInPlastico = true;
         for(int i = 0; i < objetosPlastico.size(); i++){
-            if(objetosPlastico[i]->getTranslate() >= 3){
-                random = (rand()%100)/10.0;
+            random = (rand()%100)/10.0;
+            if(objetosPlastico[i]->getTranslate() > 3.5){
+                if(!objetosPlastico[i]->valid && reduceOnceLifeInPlastico){
+                    lives-=1;
+                    reduceOnceLifeInPlastico = false;
+                }
                 objetosPlastico[i]->setTranslate(-1 - random);
+                objetosPlastico[i]->valid = false;
+
+
             }
+            if(objetosPlastico[i]->reset){
+                countOncePointPlastico = true;
+                objetosPlastico[i]->setTranslate(-1 - random);
+                objetosPlastico[i]->reset = false;
+            }
+
             objetosPlastico[i]->setTranslate(objetosPlastico[i]->getTranslate() + delta);
         }
 
         //Para que cada objeto se mueva Papel
+        reduceOnceLifeInPapel = true;
         for(int i = 0; i < objetosPapel.size(); i++){
-            if(objetosPapel[i]->getTranslate() > 3){
-                random = (rand()%100)/10.0;
-                objetosPapel[i]->setTranslate(-1- random);
+             random = (rand()%100)/10.0;
+            if(objetosPapel[i]->getTranslate() > 3.5){
+                if(!objetosPapel[i]->valid && reduceOnceLifeInPapel){
+                    lives-=1;
+                    reduceOnceLifeInPapel = false;
+                }
+                objetosPapel[i]->setTranslate(-1 - random);
+                objetosPapel[i]->valid = false;
+
+
             }
+            if(objetosPapel[i]->reset){
+                countOncePointPapel = true;
+                objetosPapel[i]->setTranslate(-1 - random);
+                objetosPapel[i]->reset = false;
+            }
+
             objetosPapel[i]->setTranslate(objetosPapel[i]->getTranslate() + delta);
         }
 
         //Para que cada objeto se mueva Aluminio
+         reduceOnceLifeInAlum = true;
         for(int i = 0; i < objetosAluminio.size(); i++){
-            if(objetosAluminio[i]->getTranslate() > 3){
-                random = (rand()%100)/10.0;
+            random = (rand()%100)/10.0;
+            if(objetosAluminio[i]->getTranslate() > 3.5){
+                if(!objetosAluminio[i]->valid && reduceOnceLifeInAlum){
+                    lives-=1;
+                    reduceOnceLifeInAlum = false;
+                }
                 objetosAluminio[i]->setTranslate(-1 - random);
+                objetosAluminio[i]->valid = false;
+
+
             }
+            if(objetosAluminio[i]->reset){
+                countOncePointAluminium = true;
+                objetosAluminio[i]->setTranslate(-1 - random);
+                objetosAluminio[i]->reset = false;
+            }
+
             objetosAluminio[i]->setTranslate(objetosAluminio[i]->getTranslate() + delta);
         }
 
         //Para que cada objeto se mueva Organico
+        reduceOnceLifeInOrganico = true;
         for(int i = 0; i < objetosOrganico.size(); i++){
-            if(objetosOrganico[i]->getTranslate() > 3){
-                random = (rand()%100)/10.0;
+             random = (rand()%100)/10.0;
+            if(objetosOrganico[i]->getTranslate() > 3.5){
+                if(!objetosOrganico[i]->valid && reduceOnceLifeInOrganico){
+                    lives-=1;
+                    reduceOnceLifeInOrganico = false;
+                }
                 objetosOrganico[i]->setTranslate(-1 - random);
+                objetosOrganico[i]->valid = false;
+
+
             }
+            if(objetosOrganico[i]->reset){
+                countOncePointOrganico = true;
+                objetosOrganico[i]->setTranslate(-1 - random);
+                objetosOrganico[i]->reset = false;
+            }
+
             objetosOrganico[i]->setTranslate(objetosOrganico[i]->getTranslate() + delta);
         }
 
@@ -353,12 +427,19 @@ void initRendering(){
 
 void opcionVolver(){
     //Boton Back
-    glColor3ub(1, 0, 0);
+    if(seleccion_v) glColor3ub(139, 0, 139);
+    else glColor3ub(0, 0, 0);
     glPushMatrix();
     glTranslatef (-2.3, 1.7, 0);
     glRotatef(1, 1.0, 0, 0);
+    glBegin(GL_QUADS);
+    glVertex3f( -0.7, -0.3, -2.0 );
+    glVertex3f(  0.7, -0.3, -2.0 );
+    glVertex3f(  0.7,  0.3, -2.0 );
+    glVertex3f( -0.7,  0.3, -2.0 );
+    glEnd();
     glPopMatrix();
-    glColor3ub(0, 0, 0);
+    glColor3ub(255, 255, 255);
     despliegaTexto(volverTxt,-2.15,0.95,0.0025,0.0025);
 }
 
@@ -373,25 +454,70 @@ void mostrarMenu(){
     glPushMatrix();
 
         //Iniciar juego
-        glColor3ub(0, 0, 0);
+        if(seleccion_1) glColor3ub(139, 0, 139);
+        else glColor3ub(0, 0, 0);
+
+        glPushMatrix();
+        glTranslatef (-2, 1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( -1.5, -0.5, -2.0 );
+        glVertex3f(  1.5, -0.5, -2.0 );
+        glVertex3f(  1.5,  0.5, -2.0 );
+        glVertex3f( -1.5,  0.5, -2.0 );
+        glEnd();
+        glPopMatrix();
+        glColor3ub(255, 255, 255);
+
         if(menuInicial)
             despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
         else if(menuNivel)
             despliegaTexto("Nivel 1",-2,0.4,0.0025,0.0025);
+
+
         //Instrucciones
-        glColor3ub(0, 0, 0);
+        if(seleccion_2) glColor3ub(139, 0, 139);
+        else glColor3ub(0, 0, 0);
+
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( -1.5, -0.5, -2.0 );
+        glVertex3f(  1.6, -0.5, -2.0 );
+        glVertex3f(  1.6,  0.5, -2.0 );
+        glVertex3f( -1.5,  0.5, -2.0 );
+        glEnd();
+        glPopMatrix();
+        glColor3ub(255, 255, 255);
+
         if(menuInicial)
-            despliegaTexto(instruccionesTxt,-2,-1.05,0.0025,0.0025);
+            despliegaTexto(instruccionesTxt,-2.2,-1.05,0.0025,0.0025);
         else if(menuNivel)
             despliegaTexto("Nivel 2",-2,-1.05,0.0025,0.0025);
+
+
         //Salir
-        glColor3ub(0, 0, 0);
+
+        if(seleccion_3) glColor3ub(139, 0, 139);
+        else glColor3ub(0, 0, 0);
+        glPushMatrix();
+        glTranslatef (-2, -3.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( -1.5, -0.5, -2.0 );
+        glVertex3f(  1.5, -0.5, -2.0 );
+        glVertex3f(  1.5,  0.5, -2.0 );
+        glVertex3f( -1.5,  0.5, -2.0 );
+        glEnd();
+        glPopMatrix();
+        glColor3ub(255, 255, 255);
         if(menuInicial)
             despliegaTexto(salirTxt,-2,-2.7,0.005,0.005);
         else if(menuNivel)
             despliegaTexto("Nivel 3",-2,-2.7,0.0025,0.0025);
-    //if(menuNivel)
-    //  opcionVolver();
+    if(menuNivel)
+      opcionVolver();
 
     glPopMatrix();
 }
@@ -435,10 +561,7 @@ void display(){
 
     glBindTexture(GL_TEXTURE_2D, txtName[0]);
 
-    //start = false;
-    //menuInicial = false;
-    //menuNivel = false;
-    //instrucciones = false;
+
 
     if(start){
 
@@ -457,8 +580,7 @@ void display(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if(juegoIniciado){
-            //nivel = 3;  /****************************************************PARA CAMBIAR DE NIVEL******************************/
-            iniciaNivel();
+             iniciaNivel();
             juegoIniciado = !juegoIniciado;
         }
 
@@ -751,32 +873,61 @@ void display(){
         /***********Vidas***************/
 
         despliegaTexto("Nivel "+to_string(nivel),1.5,-2.7,.001,.001);
-        despliegaTexto("Puntos:",1.2,-2.95,.001,.001);
-        despliegaTexto("100/1000",1.65,-2.95,.001,.001);
+        despliegaTexto("Puntos: "+to_string(score),1.2,-2.95,.001,.001);
+        //despliegaTexto("100/1000",1.65,-2.95,.001,.001);
         despliegaTexto("Vidas:",1.2,-3.2,.001,.001);
 
-        //vida 3
-        glPushMatrix();
-            glTranslatef (1.75, -3.15, 0);
-            glScalef(.07,.07,.07);
-            glRotatef(0+rotatePajaro*100,1,1,0);
-            glmDraw(&model[10], GLM_COLOR);
-        glPopMatrix();
-        //vida 2
-        glPushMatrix();
-            glTranslatef (2, -3.15, 0);
-            glScalef(.07,.07,.07);
-            glRotatef(0+rotatePajaro*100,1,1,0);
-            glmDraw(&model[10], GLM_COLOR);
-        glPopMatrix();
-         //vida 1
-        glPushMatrix();
-            glTranslatef (2.25, -3.15, 0);
-            glScalef(.07,.07,.07);
-            glRotatef(0+rotatePajaro*100,1,1,0);
-            glmDraw(&model[10], GLM_COLOR);
-        glPopMatrix();
-        /********************************/
+        if(lives == 3){
+            //vida 3
+            glPushMatrix();
+                glTranslatef (1.75, -3.15, 0);
+                glScalef(.07,.07,.07);
+                glRotatef(0+rotatePajaro*100,1,1,0);
+                glmDraw(&model[10], GLM_COLOR);
+            glPopMatrix();
+                //vida 2
+                glPushMatrix();
+                    glTranslatef (2, -3.15, 0);
+                    glScalef(.07,.07,.07);
+                    glRotatef(0+rotatePajaro*100,1,1,0);
+                    glmDraw(&model[10], GLM_COLOR);
+                glPopMatrix();
+                 //vida 1
+                glPushMatrix();
+                    glTranslatef (2.25, -3.15, 0);
+                    glScalef(.07,.07,.07);
+                    glRotatef(0+rotatePajaro*100,1,1,0);
+                    glmDraw(&model[10], GLM_COLOR);
+                glPopMatrix();
+                /********************************/
+        }
+        if(lives == 2){
+                //vida 2
+                glPushMatrix();
+                    glTranslatef (2, -3.15, 0);
+                    glScalef(.07,.07,.07);
+                    glRotatef(0+rotatePajaro*100,1,1,0);
+                    glmDraw(&model[10], GLM_COLOR);
+                glPopMatrix();
+                 //vida 1
+                glPushMatrix();
+                    glTranslatef (2.25, -3.15, 0);
+                    glScalef(.07,.07,.07);
+                    glRotatef(0+rotatePajaro*100,1,1,0);
+                    glmDraw(&model[10], GLM_COLOR);
+                glPopMatrix();
+                /********************************/
+            }
+        if(lives == 1){
+                 //vida 1
+                glPushMatrix();
+                    glTranslatef (2.25, -3.15, 0);
+                    glScalef(.07,.07,.07);
+                    glRotatef(0+rotatePajaro*100,1,1,0);
+                    glmDraw(&model[10], GLM_COLOR);
+                glPopMatrix();
+                /********************************/
+            }
 
     }
 
@@ -787,6 +938,63 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
 {
     switch (key)
     {
+        //Plastico papel alum organico
+        case 'a':
+             //Para que cada objeto se mueva Aluminio
+            for(int i = 0; i < objetosPlastico.size(); i++){
+                if(objetosPlastico[i]->getTranslate() >= 2.5 && objetosPlastico[i]->getTranslate() <= 3){
+                     if(countOncePointPlastico){
+                         score += 10;
+                         countOncePointPlastico = false;
+
+                     }
+                   objetosPlastico[i]->reset = true;
+                }
+
+            }
+            break;
+        case 's':
+             //Para que cada objeto se mueva Aluminio
+            for(int i = 0; i < objetosPapel.size(); i++){
+                if(objetosPapel[i]->getTranslate() >= 2.5 && objetosPapel[i]->getTranslate() <= 3){
+                     if(countOncePointPapel){
+                         score += 10;
+                         countOncePointPapel = false;
+
+                     }
+                   objetosPapel[i]->reset = true;
+                }
+
+            }
+            break;
+        case 'k':
+             //Para que cada objeto se mueva Aluminio
+            for(int i = 0; i < objetosAluminio.size(); i++){
+                if(objetosAluminio[i]->getTranslate() >= 2.5 && objetosAluminio[i]->getTranslate() <= 3){
+                     if(countOncePointAluminium){
+                         score += 10;
+                         countOncePointAluminium = false;
+
+                     }
+                   objetosAluminio[i]->reset = true;
+                }
+
+            }
+            break;
+        case 'l':
+             //Para que cada objeto se mueva Aluminio
+            for(int i = 0; i < objetosOrganico.size(); i++){
+                if(objetosOrganico[i]->getTranslate() >= 2.5 && objetosOrganico[i]->getTranslate() <= 3){
+                     if(countOncePointOrganico){
+                         score += 10;
+                         countOncePointOrganico = false;
+
+                     }
+                   objetosOrganico[i]->reset = true;
+                }
+
+            }
+            break;
         case 27:
             exit(0);
             break;
@@ -817,7 +1025,7 @@ void myMouse(int button, int state, int x, int y)
     int xIzq_volver = windowWidth*39/800, xDer_volver = windowWidth*205/800;
     if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON)
     {
-
+        seleccion_1 = false; seleccion_2 = false; seleccion_2 = false; seleccion_v = false;
         if(menuInicial || menuNivel) {
             xIzq = windowWidth*100/800; xDer = windowWidth*300/800;
             yUp_1 = windowHeight*90/800; yDown_1 = windowHeight*207/800;
@@ -874,7 +1082,63 @@ void myMouse(int button, int state, int x, int y)
         glutPostRedisplay();
     }
 }
-
+void passive(int x, int y)
+{
+    int xIzq, xDer, yUp_1, yDown_1, yUp_2, yDown_2, yUp_3, yDown_3;
+    int yUp_volver = windowHeight*33/800, yDown_volver = windowHeight*103/800;
+    int xIzq_volver = windowWidth*39/800, xDer_volver = windowWidth*205/800;
+    if(menuInicial || menuNivel) {
+            xIzq = windowWidth*100/800; xDer = windowWidth*300/800;
+            yUp_1 = windowHeight*90/800; yDown_1 = windowHeight*207/800;
+            yUp_2 = windowHeight*332/800; yDown_2 = windowHeight*448/800;
+            yUp_3 = windowHeight*574/800; yDown_3 = windowHeight*689/800;
+        if(x >= xIzq && x <= xDer) {
+            if(y >= yUp_1 && y <= yDown_1) {
+                seleccion_1 = true;
+            }
+            else if(y >= yUp_2 && y <= yDown_2) {
+                seleccion_2 = true;
+            }
+            else if(y >= yUp_3 && y <= yDown_3) {
+                seleccion_3 = true;
+            }
+            else {
+                seleccion_1 = false;
+                seleccion_2 = false;
+                seleccion_3 = false;
+            }
+        }
+        else if(x >= xIzq_volver && x <= xDer_volver && menuNivel) {
+            if(y >= yUp_volver && y <= yDown_volver) {
+                seleccion_v = true;
+            }
+            else {
+                seleccion_v = false;
+            }
+        }
+        else {
+            seleccion_v = false;
+            seleccion_1 = false;
+            seleccion_2 = false;
+            seleccion_3 = false;
+        }
+    }
+    else if(instrucciones) {
+        if(x >= xIzq_volver && x <= xDer_volver && y >= yUp_volver && y <= yDown_volver) {
+            seleccion_v = true;
+        }
+        else {
+            seleccion_v = false;
+        }
+    }
+    else {
+        seleccion_v = false;
+        seleccion_1 = false;
+        seleccion_2 = false;
+        seleccion_3 = false;
+    }
+    glutPostRedisplay();
+}
 void specialKeys (int key, int x, int y){
     if(!menuInicial && !menuNivel && !instrucciones) {
         switch (key) {
@@ -930,6 +1194,7 @@ int main(int argc, char** argv)
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeys);
     glutMouseFunc(myMouse);
+    glutPassiveMotionFunc(passive);
     glutMainLoop();
     return 0;
 }

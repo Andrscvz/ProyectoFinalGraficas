@@ -6,6 +6,13 @@
 //  Copyright (c) 2015 Gustavo Ferrufino. All rights reserved.
 //
 
+//
+//  main.cpp
+//  game
+//
+//  Created by Gustavo Ferrufino on 10/21/15.
+//  Copyright (c) 2015 Gustavo Ferrufino. All rights reserved.
+//
 #include <iostream>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -33,8 +40,7 @@ std::ostringstream strStream;
 string fullPath = __FILE__;
 static GLuint txtName[40];
 
-float t=-1.0;
-float delta=0.11;
+
 
 //Movimientos del pajaro
 float movePajaroX = -2;
@@ -55,26 +61,30 @@ int windowWidth = 800, windowHeight = 800;
 int texNumber = -1;
 int score = 0;
 int nivel = 1;
-int lives = 0;
+int lives = 3;
 
 //FLOAT
 float velX,velY;
 const float medida = 10.0;
+float t=-1.0;
+float delta=0.11;
+float showChangeOfLevel = 0.0;
 
 //BOOLS
-bool gameOver = true;
+bool gameOver = false;
 bool moviendo = false;
 bool menuInicial = false;
 bool menuNivel = false;
 bool instrucciones = false;
-bool start = false;
+bool start = start;
 bool playerLeft = false;
 bool playerRight = false;
-bool juegoIniciado = false;
+bool juegoIniciado = true;
 bool seleccion_1 = false, seleccion_2 = false, seleccion_3 = false, seleccion_v = false;
 bool btn = false;
 bool newGame= false;
-
+bool gameWon = false;
+bool changeOflevel = true;
 
 /*** VERIFICAR ITERACION ***/
 bool countOncePointAluminium = true;
@@ -583,7 +593,7 @@ void display(){
         
         mostrarInstrucciones();
         
-    } else if(lives > 0){
+    } else if(lives > 0 && !gameWon){
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
@@ -598,16 +608,6 @@ void display(){
         }
         
         
-        if(nivel == 1 && score>150){
-            iniciaNivel();
-            nivel = 2;
-        }else if(nivel == 2 && score > 320){
-            iniciaNivel();
-            nivel = 3;
-        }else if(nivel == 3 && score > 500){
-            iniciaNivel();
-            nivel = 4;
-        }
         
         /***********Pajaro***************/
         glPushMatrix();
@@ -952,18 +952,58 @@ void display(){
             glPopMatrix();
             /********************************/
         }
+        if (nivel == 2 && showChangeOfLevel < 2) {
+            
+            showChangeOfLevel+=0.1;
+            despliegaTexto("Nivel 2",-0.5, -0.5,0.0025,0.0025);
+        }else if (nivel == 3 && showChangeOfLevel <2){
+            showChangeOfLevel+=0.1;
+            despliegaTexto("Nivel 3",-0.5, -0.5,0.0025,0.0025);
+            
+        }else if (nivel == 4 && showChangeOfLevel <2){
+            showChangeOfLevel+=0.1;
+            despliegaTexto("Nivel 4",-0.5, -0.5,0.0025,0.0025);
+            
+        }
+        
+        if(nivel == 1 && score > 120){
+            iniciaNivel();
+            nivel = 2;
+            showChangeOfLevel = 0;
+        }else if(nivel == 2 && score > 320){
+            iniciaNivel();
+            nivel = 3;
+            despliegaTexto("Nivel 3",-1, 0.5,0.0025,0.0025);
+            showChangeOfLevel = 0;
+        }else if(nivel == 3 && score > 500){
+            iniciaNivel();
+            nivel = 4;
+            despliegaTexto("Nivel 4",-1, 0.5,0.0025,0.0025);
+            showChangeOfLevel = 0;
+        }else if(nivel == 4 && score >800){
+            gameWon = true;
+        }
+        
+        
+    }else if(gameWon){
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glColor3ub(13, 145, 25);
+        despliegaTexto("Ganaste!",-1, 0.5,0.0025,0.0025);
+        despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
+        despliegaTexto("Nuevo Juego",1,-2,0.0015,0.0015);
         
     }else{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3ub(13, 145, 25);
         despliegaTexto("Game Over",-1, 0.5,0.0025,0.0025);
-        
-        
-        
-        despliegaTexto("Score: "+to_string(score),-1.75,-2,0.0015,0.0015);
-        despliegaTexto("Play Again",1,-2,0.0015,0.0015);
+        despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
+        despliegaTexto("Nuevo Juego",1,-2,0.0015,0.0015);
         gameOver = true;
     }
+    
+    
+    
+    
     
     glutSwapBuffers();
 }
@@ -972,7 +1012,6 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
 {
     switch (key)
     {
-            
             //Plastico papel alum organico
         case 'a':
             //Para que cada objeto se mueva Aluminio
@@ -1113,7 +1152,7 @@ void myMouse(int button, int state, int x, int y)
                 instrucciones = false;
                 menuInicial = true;
             }
-        }else if (gameOver){
+        }else if (gameOver || gameWon){
             xIzq = windowWidth*550/800; xDer = windowWidth*750/800;
             
             if (x>= xIzq && x <= xDer && y>(windowHeight*500/800) && y<(windowHeight*600/800)) {
@@ -1221,7 +1260,7 @@ int main(int argc, char** argv)
     glutInitWindowSize (windowWidth,windowHeight);
     glutInitWindowPosition (0,0);
     glutInitDisplayMode (GLUT_DOUBLE| GLUT_RGB| GLUT_DEPTH);
-    glutCreateWindow("Help Out Willy!");
+    glutCreateWindow("Ayuda a Willy con la Basura!");
     init();
     initModels();
     glutReshapeFunc(reshape);

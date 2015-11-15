@@ -38,7 +38,7 @@ using namespace std;
 
 std::ostringstream strStream;
 string fullPath = __FILE__;
-static GLuint txtName[40];
+static GLuint txtName[2];
 
 
 
@@ -73,10 +73,9 @@ float showChangeOfLevel = 0.0;
 //BOOLS
 bool gameOver = false;
 bool moviendo = false;
-bool menuInicial = false;
+bool menuInicial = true;
 bool menuNivel = false;
 bool instrucciones = false;
-bool start = start;
 bool playerLeft = false;
 bool playerRight = false;
 bool juegoIniciado = true;
@@ -210,12 +209,15 @@ void initModels(){
 
 void loadImage(string nombreImagen, int numImagen){
     Image* image;
-    string ruta = fullPath + "./imagenes/" + nombreImagen;
+    string ruta = fullPath + nombreImagen;
     image = loadBMP(ruta.c_str());
     loadTexture(image,numImagen);
     delete image;
 }
-
+void initRendering()
+{
+    
+}
 void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -428,52 +430,36 @@ void init(void){
     glEnable(GL_DEPTH_TEST);
 }
 
-void initRendering(){
-    GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
-    
-    glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);
-    
-    glGenTextures(2, txtName); //Make room for our texture
-    
-    loadImage("willy.bmp",++texNumber);
-}
 
 void opcionVolver(){
     //Boton Back
-    if(seleccion_v) glColor3ub(139, 0, 139);
-    else glColor3ub(0, 0, 0);
+    if(seleccion_v)  glColor3ub(13, 145, 25);
+    else glColor3ub(17, 185, 34);
     glPushMatrix();
     glTranslatef (-2.3, 1.7, 0);
     glRotatef(1, 1.0, 0, 0);
     glBegin(GL_QUADS);
-    glVertex3f( -0.7, -0.3, -2.0 );
-    glVertex3f(  0.7, -0.3, -2.0 );
-    glVertex3f(  0.7,  0.3, -2.0 );
-    glVertex3f( -0.7,  0.3, -2.0 );
+    glVertex3f( -0.6, -0.3, -2.0 );
+    glVertex3f(  0.6, -0.3, -2.0 );
+    glVertex3f(  0.6,  0.3, -2.0 );
+    glVertex3f( -0.6,  0.3, -2.0 );
     glEnd();
     glPopMatrix();
-    glColor3ub(255, 200, 255);
+    glColor3ub(255, 255, 255);
     despliegaTexto(volverTxt,-2.15,0.95,0.0025,0.0025);
     
     
     
 }
 
-void mostrarInicio(){
-    glPushMatrix();
-    glColor3ub(1, 0, 0);
-    despliegaTexto(beginTxt,-2,0.4,0.0025,0.0025);
-    glPopMatrix();
-}
+
 
 void mostrarMenu(){
     glPushMatrix();
     
     //Iniciar juego
-    if(seleccion_1) glColor3ub(139, 0, 139);
-    else glColor3ub(0, 0, 0);
+    if(seleccion_1)  glColor3ub(13, 145, 25);
+    else glColor3ub(17, 185, 34);
     
     glPushMatrix();
     glTranslatef (-2, 1.0, 0);
@@ -494,8 +480,8 @@ void mostrarMenu(){
     
     
     //Instrucciones
-    if(seleccion_2) glColor3ub(139, 0, 139);
-    else glColor3ub(0, 0, 0);
+    if(seleccion_2)  glColor3ub(13, 145, 25);
+    else glColor3ub(17, 185, 34);
     
     glPushMatrix();
     glTranslatef (-2, -1.0, 0);
@@ -517,8 +503,8 @@ void mostrarMenu(){
     
     //Salir
     
-    if(seleccion_3) glColor3ub(139, 0, 139);
-    else glColor3ub(0, 0, 0);
+    if(seleccion_3)  glColor3ub(13, 145, 25);
+    else glColor3ub(17, 185, 34);
     glPushMatrix();
     glTranslatef (-2, -3.0, 0);
     glRotatef(2, 1.0, 0, 0);
@@ -538,6 +524,15 @@ void mostrarMenu(){
         opcionVolver();
     
     glPopMatrix();
+    
+    
+    /***********Pajaro***************/
+    glPushMatrix();
+    glScalef(.7,.7,.7);
+    glTranslatef (-movePajaroX, 1, movePajaroZ);
+    glRotatef(0-rotatePajaro*40,0,1,0);
+    glmDraw(&model[0], GLM_COLOR);
+    glPopMatrix();
 }
 
 
@@ -550,42 +545,10 @@ void mostrarInstrucciones(){
 
 void display(){
     
-    glClearColor(0.0, 0.75, 0.75,1);
+    glClearColor(247.0/255,205.0/255.0, 106.0/255.0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    glPushMatrix();
-    
-    glTranslatef (0, 0.0, -.5);
-    //Game Stats
-    
-    glBegin(GL_QUADS);
-    //Derecha (verde)
-    glColor3f(0.0, 1.0, 0.1);
-    glVertex3f( medida, medida, -60 );
-    glVertex3f( -medida,  -medida, -60 );
-    glVertex3f( medida,  -medida,  60 );
-    glVertex3f( medida, medida,  60 );
-    
-    //Izquierda (azul)
-    glColor3f(0.1, 0.0, 1.0);
-    glVertex3f( -medida, -medida, -60 );
-    glVertex3f( medida, -medida,  60 );
-    glVertex3f( -medida,  medida,  60 );
-    glVertex3f( medida,  medida, -60 );
-    
-    glEnd();
-    
-    glPopMatrix();
-    
-    glBindTexture(GL_TEXTURE_2D, txtName[0]);
-    
-    
-    
-    if(start){
-        
-        mostrarInicio();
-        
-    }else if(menuInicial || menuNivel) {
+    if(menuInicial || menuNivel) {
         
         mostrarMenu();
         
@@ -594,7 +557,7 @@ void display(){
         mostrarInstrucciones();
         
     } else if(lives > 0 && !gameWon){
-        
+        glClearColor(28.0/255, 174.0/255, 210.0/255, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         if(juegoIniciado){
@@ -873,6 +836,8 @@ void display(){
         /***************Fin de mundo*****************/
         
         
+        
+        
         /***********Seccion de vidas y puntaje***************/
         glPushMatrix();
         glColor3ub(199, 77, 36);
@@ -988,16 +953,95 @@ void display(){
     }else if(gameWon){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3ub(13, 145, 25);
-        despliegaTexto("Ganaste!",-1, 0.5,0.0025,0.0025);
+        
+        
+        //Cuadro de ganaste
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( 0, 0.5, -2.0 );
+        glVertex3f(  3, 0.5, -2.0 );
+        glVertex3f(  3,  1.5, -2.0 );
+        glVertex3f( 0,  1.5, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
+        
+        //Cuadro de Puntaje
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( -0.5, -0.7, -2.0 );
+        glVertex3f(  1.2, -0.7, -2.0 );
+        glVertex3f(  1.2,  -1.7, -2.0 );
+        glVertex3f( -0.5,  -1.7, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
+        //Cuadro de Nuevo Juego
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( 2.5, -0.7, -2.0 );
+        glVertex3f(  4.5, -0.7, -2.0 );
+        glVertex3f(  4.5,  -1.7, -2.0 );
+        glVertex3f( 2.5,  -1.7, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
+        
+        glColor3ub(255, 255, 255);
+        despliegaTexto("Ganaste!",-1, -0.3,0.0025,0.0025);
         despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
-        despliegaTexto("Nuevo Juego",1,-2,0.0015,0.0015);
+        despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
         
     }else{
+        
+        //Cuadro de ganaste
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( 0, 0.5, -2.0 );
+        glVertex3f(  3, 0.5, -2.0 );
+        glVertex3f(  3,  1.5, -2.0 );
+        glVertex3f( 0,  1.5, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
+        
+        //Cuadro de Puntaje
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( -0.5, -0.7, -2.0 );
+        glVertex3f(  1.2, -0.7, -2.0 );
+        glVertex3f(  1.2,  -1.7, -2.0 );
+        glVertex3f( -0.5,  -1.7, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
+        //Cuadro de Nuevo Juego
+        glPushMatrix();
+        glTranslatef (-2, -1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex3f( 2.5, -0.7, -2.0 );
+        glVertex3f(  4.5, -0.7, -2.0 );
+        glVertex3f(  4.5,  -1.7, -2.0 );
+        glVertex3f( 2.5,  -1.7, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3ub(13, 145, 25);
-        despliegaTexto("Game Over",-1, 0.5,0.0025,0.0025);
+        despliegaTexto("Game Over",-1, -0.3,0.0025,0.0025);
         despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
-        despliegaTexto("Nuevo Juego",1,-2,0.0015,0.0015);
+        despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
         gameOver = true;
     }
     
@@ -1079,12 +1123,7 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
             }
             break;
             
-        case 13:
-            if(start){
-                start=false;
-                menuInicial=true;
-                display();
-            }
+            
             //juegoIniciado = true;   //Para reiniciar o iniciar el juego
             break;
             
@@ -1164,7 +1203,6 @@ void myMouse(int button, int state, int x, int y)
                 menuNivel = false;
                 instrucciones = false;
                 juegoIniciado = true;
-                start = false;
                 newGame = true;
             }
             
@@ -1263,6 +1301,7 @@ int main(int argc, char** argv)
     glutCreateWindow("Ayuda a Willy con la Basura!");
     init();
     initModels();
+    initRendering();
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutTimerFunc(50, myTimer, 1);

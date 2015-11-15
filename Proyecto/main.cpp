@@ -999,7 +999,8 @@ void display(){
         despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
         
     }else{
-        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glColor3ub(13, 145, 25);
         //Cuadro de ganaste
         glPushMatrix();
         glTranslatef (-2, -1.0, 0);
@@ -1037,8 +1038,7 @@ void display(){
         glEnd();
         glPopMatrix();
         
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glColor3ub(13, 145, 25);
+        glColor3ub(255, 255, 255);
         despliegaTexto("Game Over",-1, -0.3,0.0025,0.0025);
         despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
         despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);

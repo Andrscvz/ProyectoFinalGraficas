@@ -65,7 +65,7 @@ int lives = 3;
 
 //FLOAT
 float velX,velY;
-const float medida = 10.0;
+
 float t=-1.0;
 float delta=0.11;
 float showChangeOfLevel = 0.0;
@@ -84,7 +84,7 @@ bool btn = false;
 bool newGame= false;
 bool gameWon = false;
 bool changeOflevel = true;
-
+bool pause = false;
 /*** VERIFICAR ITERACION ***/
 bool countOncePointAluminium = true;
 bool reduceOnceLifeInAlum = true;
@@ -207,17 +207,6 @@ void initModels(){
     
 }
 
-void loadImage(string nombreImagen, int numImagen){
-    Image* image;
-    string ruta = fullPath + nombreImagen;
-    image = loadBMP(ruta.c_str());
-    loadTexture(image,numImagen);
-    delete image;
-}
-void initRendering()
-{
-    
-}
 void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -417,7 +406,7 @@ void myTimer(int i) {
         }
         
         glutPostRedisplay();
-        if(!gameOver){
+        if(!gameOver && !pause){
             glutTimerFunc(100,myTimer,1);
         }
     }
@@ -452,9 +441,29 @@ void opcionVolver(){
     
 }
 
-
+void reset(){
+    score = 0;
+    nivel = 1;
+    lives = 3;
+    
+    gameOver = false;
+    moviendo = false;
+    menuInicial = true;
+    menuNivel = false;
+    instrucciones = false;
+    btn = false;
+    newGame= false;
+    gameWon = false;
+    changeOflevel = true;
+    pause = false;
+    
+    
+    
+}
 
 void mostrarMenu(){
+    
+    
     glPushMatrix();
     
     //Iniciar juego
@@ -539,7 +548,13 @@ void mostrarMenu(){
 
 void mostrarInstrucciones(){
     glPushMatrix();
-    opcionVolver();
+    if (!pause) { // Implica que esto fue accesado por el menu y no por click derecho
+        opcionVolver();
+    }else{
+        glColor3ub(0, 0, 0);
+        despliegaTexto("dale click derecho para continuar en el juego ",-1,-2.7,.001,.001);
+    }
+    
     glPopMatrix();
 }
 
@@ -1001,7 +1016,7 @@ void display(){
     }else{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3ub(13, 145, 25);
-        //Cuadro de ganaste
+        //Cuadro de Gameover
         glPushMatrix();
         glTranslatef (-2, -1.0, 0);
         glRotatef(2, 1.0, 0, 0);
@@ -1039,9 +1054,9 @@ void display(){
         glPopMatrix();
         
         glColor3ub(255, 255, 255);
-        despliegaTexto("Game Over",-1, -0.3,0.0025,0.0025);
-        despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
-        despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
+        despliegaTexto("Game Over",-1.3, -0.3,0.0025,0.0025);
+        despliegaTexto("Puntaje: "+to_string(score),-1.8,-2,0.0015,0.0015);
+        despliegaTexto("Nuevo Juego?",0.5,-2,0.0015,0.0015);
         gameOver = true;
     }
     
@@ -1267,16 +1282,7 @@ void passive(int x, int y)
     }
     glutPostRedisplay();
 }
-void specialKeys (int key, int x, int y){
-    if(!menuInicial && !menuNivel && !instrucciones) {
-        switch (key) {
-                
-                
-            default:
-                break;
-        }
-    }
-}
+
 
 void getParentPath(){
     
@@ -1290,7 +1296,56 @@ void getParentPath(){
         fullPath.erase(i,1);
     }
 }
-
+void myMenu(int entryID)
+{
+    // revisar cada entrada
+    
+    switch (entryID) {
+        case 1:
+            //Falta reiniciar el juego desde 0
+            
+            break;
+        case 2:
+            instrucciones = true;
+            pause = true;
+            break;
+        case 3:
+            pause = true;
+            break;
+        case 4:
+            pause = false;
+            instrucciones = false;
+            if (lives>0) {
+                glutTimerFunc(100,myTimer,1);
+            }
+            
+            break;
+        case 11:
+            exit(0);
+        default:
+            break;
+    }
+    
+    // volver a dibujar
+    glutPostRedisplay();
+}
+void createMenus(){
+    
+    // crear el menú e indicar la función callback
+    glutCreateMenu(myMenu);
+    
+    // agregar entradas
+    //glutAddMenuEntry("Menu Principal",1);
+    glutAddMenuEntry("Instrucciones",2);
+    glutAddMenuEntry("Pausar",3);
+    glutAddMenuEntry("Continuar con juego",4);
+    glutAddMenuEntry("Salir del juego",11);
+    
+    
+    // atar el menú al botón derecho
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+    
+}
 int main(int argc, char** argv)
 {
     getParentPath();
@@ -1301,13 +1356,12 @@ int main(int argc, char** argv)
     glutCreateWindow("Ayuda a Willy con la Basura!");
     init();
     initModels();
-    initRendering();
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutTimerFunc(50, myTimer, 1);
     glutKeyboardFunc(keyboard);
-    glutSpecialFunc(specialKeys);
     glutMouseFunc(myMouse);
+    createMenus();
     glutPassiveMotionFunc(passive);
     glutMainLoop();
     return 0;

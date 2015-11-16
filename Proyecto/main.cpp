@@ -456,9 +456,29 @@ void mostrarMenu(){
     glPopMatrix();
     glColor3ub(255, 255, 255);
     
-    if(menuInicial)
+    if(menuInicial){
         despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
-    else if(menuNivel)
+        
+        glPopMatrix();
+        
+        glPushMatrix();
+        glTranslatef (-2, 1.0, 0);
+        glRotatef(2, 1.0, 0, 0);
+        glBegin(GL_QUADS);
+        glColor3ub(255, 255, 255);
+        glVertex3f( 2.5, -2.2, -2.0 );
+        glVertex3f(  5, -2.2, -2.0 );
+        glColor3ub(101, 124, 242);
+        glVertex3f(  5.3,  -1.3, -2.0 );
+        glVertex3f( 2.8,  -1.3, -2.0 );
+        glEnd();
+        glPopMatrix();
+        
+        glColor3ub(13, 145, 25);
+        despliegaTexto("Ayuda a Willy",0.5, -0.9,0.002,0.002);
+        
+        
+    }else if(menuNivel)
         despliegaTexto("Nivel 1",-2,0.4,0.0025,0.0025);
     
     
@@ -554,7 +574,7 @@ void mostrarInstrucciones(){
 
 void display(){
     
-    glClearColor(247.0/255,205.0/255.0, 106.0/255.0,1);
+    glClearColor(54.0/255,76.0/255.0, 189.0/255.0,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     if(menuInicial || menuNivel) {

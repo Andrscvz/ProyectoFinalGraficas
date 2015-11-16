@@ -32,8 +32,8 @@
 
 #include "glm.h"
 #include "glmint.h"
-#include "imageloader.h"
 #include "Objeto.h"
+
 using namespace std;
 
 std::ostringstream strStream;
@@ -113,32 +113,6 @@ salirTxt = "Salir",
 volverTxt = "<-", beginTxt = "Presiona Enter";
 
 
-//Makes the image into a texture, and returns the id of the texture
-void loadTexture(Image* image,int k){
-    
-    glBindTexture(GL_TEXTURE_2D, txtName[k]); //Tell OpenGL which texture to edit
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    
-    //Map the image to the texture
-    glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
-                 0,                            //0 for now
-                 GL_RGB,                       //Format OpenGL uses for image
-                 image->width, image->height,  //Width and height
-                 0,                            //The border of the image
-                 GL_RGB, //GL_RGB, because pixels are stored in RGB format
-                 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
-                 //as unsigned numbers
-                 image->pixels);               //The actual pixel data
-    
-}
 
 void initModels(){
     
@@ -548,9 +522,29 @@ void mostrarMenu(){
 
 void mostrarInstrucciones(){
     glPushMatrix();
+    //Cuadro de Instrucciones
+    glColor3ub(13, 145, 25);
+    glPushMatrix();
+    glTranslatef (-2, -1.0, 0);
+    glRotatef(2, 1.0, 0, 0);
+    glBegin(GL_QUADS);
+    glVertex3f( -0.5, -1.5, -2.0 );
+    glVertex3f(  4.5, -1.5, -2.0 );
+    glVertex3f(  4.5,  1.5, -2.0 );
+    glVertex3f( -0.5,  1.5, -2.0 );
+    glEnd();
+    glPopMatrix();
+    glColor3ub(255, 255, 255);
+    despliegaTexto("Instrucciones ",-1,-0.25,.0025,.0025);
+    despliegaTexto("Presiona ' a ' para seleccionar la basura Plastico",-1.7,-0.55,.001,.001);
+    despliegaTexto("Presiona ' s ' para seleccionar la basura Papel",-1.7,-0.75,.001,.001);
+    despliegaTexto("Presiona ' k ' para seleccionar la basura Aluminium",-1.7,-0.95,.001,.001);
+    despliegaTexto("Presiona ' l ' para seleccionar la basura Organico",-1.7,-1.15,.001,.001);
+    
     if (!pause) { // Implica que esto fue accesado por el menu y no por click derecho
         opcionVolver();
     }else{
+        
         glColor3ub(0, 0, 0);
         despliegaTexto("dale click derecho para continuar en el juego ",-1,-2.7,.001,.001);
     }
@@ -1012,6 +1006,8 @@ void display(){
         despliegaTexto("Ganaste!",-1, -0.3,0.0025,0.0025);
         despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
         despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
+        glColor3ub(0, 0, 0);
+        despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
         
     }else{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1057,6 +1053,9 @@ void display(){
         despliegaTexto("Game Over",-1.3, -0.3,0.0025,0.0025);
         despliegaTexto("Puntaje: "+to_string(score),-1.8,-2,0.0015,0.0015);
         despliegaTexto("Nuevo Juego?",0.5,-2,0.0015,0.0015);
+        glColor3ub(0, 0, 0);
+        despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
+        
         gameOver = true;
     }
     

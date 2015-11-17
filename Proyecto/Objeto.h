@@ -9,6 +9,8 @@ class Objeto{
         double getScale();
         double getTranslate();
         int getModel();
+        bool reset;
+        bool valid;
     private:
         double scale;
         int model;
@@ -19,6 +21,8 @@ Objeto::Objeto(){
     scale = 1;
     model = 0;
     translate = -1;
+    reset = false;
+    valid = true;
 }
 
 Objeto::Objeto(double s, int m, double t){

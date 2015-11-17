@@ -430,14 +430,14 @@ void reset(){
     gameWon = false;
     changeOflevel = true;
     pause = false;
-    
-    
-    
+
+
+
 }
 
 void mostrarMenu(){
     
-    
+   
     glPushMatrix();
     
     //Iniciar juego
@@ -458,9 +458,9 @@ void mostrarMenu(){
     
     if(menuInicial){
         despliegaTexto(jugarTxt,-2,0.4,0.005,0.005);
-        
+    
         glPopMatrix();
-        
+     
         glPushMatrix();
         glTranslatef (-2, 1.0, 0);
         glRotatef(2, 1.0, 0, 0);
@@ -468,7 +468,7 @@ void mostrarMenu(){
         glColor3ub(255, 255, 255);
         glVertex3f( 2.5, -2.2, -2.0 );
         glVertex3f(  5, -2.2, -2.0 );
-        glColor3ub(101, 124, 242);
+           glColor3ub(101, 124, 242);
         glVertex3f(  5.3,  -1.3, -2.0 );
         glVertex3f( 2.8,  -1.3, -2.0 );
         glEnd();
@@ -555,20 +555,20 @@ void mostrarInstrucciones(){
     glEnd();
     glPopMatrix();
     glColor3ub(255, 255, 255);
-    despliegaTexto("Instrucciones ",-1,-0.25,.0025,.0025);
+     despliegaTexto("Instrucciones ",-1,-0.25,.0025,.0025);
     despliegaTexto("Presiona ' a ' para seleccionar la basura Plastico",-1.7,-0.55,.001,.001);
     despliegaTexto("Presiona ' s ' para seleccionar la basura Papel",-1.7,-0.75,.001,.001);
     despliegaTexto("Presiona ' k ' para seleccionar la basura Aluminium",-1.7,-0.95,.001,.001);
     despliegaTexto("Presiona ' l ' para seleccionar la basura Organico",-1.7,-1.15,.001,.001);
-    
+
     if (!pause) { // Implica que esto fue accesado por el menu y no por click derecho
-        opcionVolver();
+          opcionVolver();
     }else{
         
         glColor3ub(0, 0, 0);
         despliegaTexto("dale click derecho para continuar en el juego ",-1,-2.7,.001,.001);
     }
-    
+  
     glPopMatrix();
 }
 
@@ -865,7 +865,7 @@ void display(){
         /***************Fin de mundo*****************/
         
         
-        
+     
         
         /***********Seccion de vidas y puntaje***************/
         glPushMatrix();
@@ -953,7 +953,7 @@ void display(){
         }else if (nivel == 3 && showChangeOfLevel <2){
             showChangeOfLevel+=0.1;
             despliegaTexto("Nivel 3",-0.5, -0.5,0.0025,0.0025);
-            
+        
         }else if (nivel == 4 && showChangeOfLevel <2){
             showChangeOfLevel+=0.1;
             despliegaTexto("Nivel 4",-0.5, -0.5,0.0025,0.0025);
@@ -968,12 +968,12 @@ void display(){
             iniciaNivel();
             nivel = 3;
             despliegaTexto("Nivel 3",-1, 0.5,0.0025,0.0025);
-            showChangeOfLevel = 0;
+             showChangeOfLevel = 0;
         }else if(nivel == 3 && score > 500){
             iniciaNivel();
             nivel = 4;
             despliegaTexto("Nivel 4",-1, 0.5,0.0025,0.0025);
-            showChangeOfLevel = 0;
+             showChangeOfLevel = 0;
         }else if(nivel == 4 && score >800){
             gameWon = true;
         }
@@ -1027,7 +1027,7 @@ void display(){
         despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
         despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
         glColor3ub(0, 0, 0);
-        despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
+         despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
         
     }else{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1075,7 +1075,7 @@ void display(){
         despliegaTexto("Nuevo Juego?",0.5,-2,0.0015,0.0015);
         glColor3ub(0, 0, 0);
         despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
-        
+
         gameOver = true;
     }
     
@@ -1157,7 +1157,7 @@ void keyboard(unsigned char key, int mouseX, int mouseY)
             }
             break;
             
-            
+
             //juegoIniciado = true;   //Para reiniciar o iniciar el juego
             break;
             
@@ -1321,7 +1321,7 @@ void myMenu(int entryID)
     
     switch (entryID) {
         case 1:
-            //Falta reiniciar el juego desde 0
+           //Falta reiniciar el juego desde 0
             
             break;
         case 2:
@@ -1337,7 +1337,7 @@ void myMenu(int entryID)
             if (lives>0) {
                 glutTimerFunc(100,myTimer,1);
             }
-            
+         
             break;
         case 11:
             exit(0);

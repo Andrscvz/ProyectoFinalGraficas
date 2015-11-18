@@ -20,11 +20,16 @@
 #include "glmint.h"
 #include "Objeto.h"
 
+#include "Sound.h"
+
+#include "imageloader.h"
+
+
 using namespace std;
 
 std::ostringstream strStream;
 string fullPath = __FILE__;
-static GLuint txtName[2];
+static GLuint txtName[1];
 
 
 
@@ -99,6 +104,14 @@ salirTxt = "Salir",
 volverTxt = "<-", beginTxt = "Presiona Enter";
 
 
+Sound sonido = Sound("/Users/Ferrufino/Documents/Code/tec/Graficas/proyectoFinal/cleanTrash/cleanTrash/DesiJourney.wav");
+
+
+void sound (int value){
+    sonido.PlaySound();
+    glutTimerFunc(4000,sound,0);
+    
+}
 
 void initModels(){
 
@@ -165,6 +178,57 @@ void initModels(){
     glmUnitize(&model[10]);
     glmVertexNormals(&model[9], 90.0, GL_TRUE);
 
+    
+}
+
+//Makes the image into a texture, and returns the id of the texture
+void loadTexture(Image* image,int k)
+{
+    
+    glBindTexture(GL_TEXTURE_2D, txtName[k]); //Tell OpenGL which texture to edit
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    
+    //Map the image to the texture
+    glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
+                 0,                            //0 for now
+                 GL_RGB,                       //Format OpenGL uses for image
+                 image->width, image->height,  //Width and height
+                 0,                            //The border of the image
+                 GL_RGB, //GL_RGB, because pixels are stored in RGB format
+                 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
+                 //as unsigned numbers
+                 image->pixels);               //The actual pixel data
+    
+}
+void loadImage(string nombreImagen, int numImagen)
+{
+    Image* image;
+    string ruta = fullPath+ nombreImagen;
+    image = loadBMP(ruta.c_str());
+    loadTexture(image,numImagen);
+    delete image;
+    
+}
+
+void initRendering()
+{
+    GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
+    
+    glEnable(GL_LIGHT0);
+    glEnable(GL_NORMALIZE);
+    
+    glGenTextures(1, txtName); //Make room for our texture
+    
+    //loadImage("zacate.bmp",++texNumber);
 }
 
 void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
@@ -426,13 +490,10 @@ void reset(){
     gameWon = false;
     changeOflevel = true;
     pause = false;
-
-
-
+    
 }
 
 void mostrarMenu(){
-
 
     glPushMatrix();
 
@@ -464,16 +525,16 @@ void mostrarMenu(){
         glColor3ub(255, 255, 255);
         glVertex3f( 2.5, -2.2, -2.0 );
         glVertex3f(  5, -2.2, -2.0 );
-           glColor3ub(101, 124, 242);
+
+        glColor3ub(101, 124, 242);
         glVertex3f(  5.3,  -1.3, -2.0 );
         glVertex3f( 2.8,  -1.3, -2.0 );
         glEnd();
         glPopMatrix();
-
+        
         glColor3ub(13, 145, 25);
         despliegaTexto("Ayuda a Willy",0.5, -0.9,0.002,0.002);
-
-
+        
     }else if(menuNivel)
         despliegaTexto("Nivel 1",-2,0.4,0.0025,0.0025);
 
@@ -524,7 +585,6 @@ void mostrarMenu(){
 
     glPopMatrix();
 
-
     /***********Pajaro***************/
     glPushMatrix();
     glScalef(.7,.7,.7);
@@ -551,16 +611,17 @@ void mostrarInstrucciones(){
     glEnd();
     glPopMatrix();
     glColor3ub(255, 255, 255);
-     despliegaTexto("Instrucciones ",-1,-0.25,.0025,.0025);
+
+    despliegaTexto("Instrucciones ",-1,-0.25,.0025,.0025);
     despliegaTexto("Presiona ' a ' para seleccionar la basura Plastico",-1.7,-0.55,.001,.001);
     despliegaTexto("Presiona ' s ' para seleccionar la basura Papel",-1.7,-0.75,.001,.001);
     despliegaTexto("Presiona ' k ' para seleccionar la basura Aluminium",-1.7,-0.95,.001,.001);
     despliegaTexto("Presiona ' l ' para seleccionar la basura Organico",-1.7,-1.15,.001,.001);
-
+    
     if (!pause) { // Implica que esto fue accesado por el menu y no por click derecho
-          opcionVolver();
+        opcionVolver();
     }else{
-
+        
         glColor3ub(0, 0, 0);
         despliegaTexto("dale click derecho para continuar en el juego ",-1,-2.7,.001,.001);
     }
@@ -743,6 +804,10 @@ void display(){
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
         /***************Mundo*****************/
+        
+        //glBindTexture(GL_TEXTURE_2D,txtName[0]);
+        //glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+        //glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
         glPushMatrix();
         glTranslatef(0,-7,-8);
         glPushMatrix();
@@ -1026,8 +1091,8 @@ void display(){
         despliegaTexto("Puntaje: "+to_string(score),-1.75,-2,0.0015,0.0015);
         despliegaTexto("Nuevo Juego",0.5,-2,0.0015,0.0015);
         glColor3ub(0, 0, 0);
-         despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
-
+        despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
+ 
     }else{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3ub(13, 145, 25);
@@ -1073,8 +1138,7 @@ void display(){
         despliegaTexto("Puntaje: "+to_string(score),-1.8,-2,0.0015,0.0015);
         despliegaTexto("Nuevo Juego?",0.5,-2,0.0015,0.0015);
         glColor3ub(0, 0, 0);
-        despliegaTexto("Hecho por Andres Cavazos y Gustavo Ferrufino",-1,-2.7,.001,.001);
-
+        despliegaTexto("Hecho por Andres Cavazos A01195067 y Gustavo Ferrufino A00812572",-1,-2.7,.001,.001);
         gameOver = true;
     }
 
@@ -1321,7 +1385,6 @@ void myMenu(int entryID)
     switch (entryID) {
         case 1:
            //Falta reiniciar el juego desde 0
-
             break;
         case 2:
             instrucciones = true;
@@ -1336,7 +1399,6 @@ void myMenu(int entryID)
             if (lives>0) {
                 glutTimerFunc(100,myTimer,1);
             }
-
             break;
         case 11:
             exit(0);
@@ -1348,21 +1410,20 @@ void myMenu(int entryID)
     glutPostRedisplay();
 }
 void createMenus(){
-
+    
     // crear el menú e indicar la función callback
     glutCreateMenu(myMenu);
-
     // agregar entradas
     //glutAddMenuEntry("Menu Principal",1);
     glutAddMenuEntry("Instrucciones",2);
     glutAddMenuEntry("Pausar",3);
     glutAddMenuEntry("Continuar con juego",4);
     glutAddMenuEntry("Salir del juego",11);
-
-
+    
+    
     // atar el menú al botón derecho
     glutAttachMenu(GLUT_RIGHT_BUTTON);
-
+    
 }
 int main(int argc, char** argv)
 {
@@ -1373,10 +1434,12 @@ int main(int argc, char** argv)
     glutInitDisplayMode (GLUT_DOUBLE| GLUT_RGB| GLUT_DEPTH);
     glutCreateWindow("Ayuda a Willy con la Basura!");
     init();
+    initRendering();
     initModels();
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutTimerFunc(50, myTimer, 1);
+    glutTimerFunc(0,sound,0);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(myMouse);
     createMenus();

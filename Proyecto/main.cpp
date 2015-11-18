@@ -220,15 +220,14 @@ void loadImage(string nombreImagen, int numImagen)
 
 void initRendering()
 {
-    GLfloat ambientLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientLight);
     
-    glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE);
-    
+    int i=0;
     glGenTextures(1, txtName); //Make room for our texture
     
-    //loadImage("zacate.bmp",++texNumber);
+    Image* image = loadBMP("/Users/Ferrufino/Documents/Code/tec/Graficas/proyectoFinal/cleanTrash/cleanTrash/imagen.bmp");
+    loadTexture(image,i++);
+
 }
 
 void despliegaTexto(string texto, float x, float y, float sizeX, float sizeY) {
@@ -921,7 +920,28 @@ void display(){
         /****************Fin de arboles****************/
         glPopMatrix();
 
+        
+        /// Textura
+        glEnable(GL_TEXTURE_2D);
+        
+        glBindTexture(GL_TEXTURE_2D, txtName[0]);
+        
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP);
+        
         glColor3ub(13, 145, 25);
+        glPushMatrix();
+        qobj = gluNewQuadric();
+        gluQuadricDrawStyle(qobj, GLU_FILL); /* smooth shaded */
+        gluSphere(qobj, 0.75, 25, 20);
+        glutSolidSphere(5,40,40);
+        glPopMatrix();
+        
+        ///
+        
+        
         glutSolidSphere(5,40,40);
 
         glPopMatrix();
